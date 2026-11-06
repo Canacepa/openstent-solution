@@ -8,7 +8,7 @@ const story = document.querySelector('.story');
 if (cv && story) {
 
 // the fill is the story's ground colour (it only hides the edges behind it)
-const CREAM = 0x2E0C0E, FOREST = 0xFFFFFF;   // FOREST: the line colour, now white
+const CREAM = 0x2E0C0E, FOREST = 0x5CCFC6;   // FOREST: the line colour, now the accent (--accent)
 
 const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
 renderer.setClearAlpha(0);

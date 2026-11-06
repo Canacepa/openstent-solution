@@ -3,26 +3,43 @@
 {% block title %}Équipe{% endblock %}
 
 {% block body %}
+    {% set members = [
+        {slug: 'doron-carmi', name: 'Doron Carmi', role: 'MD, Msc - Fondateur & CEO', bio: "Avec plus de 20 ans d'expertise dans les maladies des valves cardiaques et les dispositifs de cardiologie, Doron est aujourd'hui le fondateur et CEO d'Open Stent Solution. Reconnu en tant que chirurgien cardiaque et inventeur de la technologie de la valve Cornelis™, il révolutionne les soins cardiaques avec un engagement envers l'innovation. Le leadership de Doron va au-delà de l'excellence clinique, mettant en avant une planification financière stratégique, une gestion budgétaire et des négociations de contrats habiles pour une croissance durable dans l'industrie compétitive des technologies médicales."},
+        {slug: 'hikmat-hojeibane', name: 'Hikmat Hojeibane', role: 'Directeur R&D et CTO - MSc, BSc', bio: "Hikmat est le <strong>directeur technique (CTO)</strong>, mettant à profit plus de <strong>25 ans d'expertise</strong> en matière d'innovation dans le domaine des <strong>dispositifs médicaux cardiovasculaires</strong>. Il est reconnu pour son rôle essentiel dans la <strong>direction de la recherche et du développement</strong> de start-ups et de grandes entreprises, avec une expérience réussie dans le développement et la commercialisation de systèmes interventionnels transcathéters. La vaste expérience d'Hikmat chez Cordis et Johnson & Johnson comprend la conception de stents flexibles et d'autres dispositifs d'intervention innovants, avec plus de <strong>30 brevets accordés aux États-Unis et 70 brevets internationaux.</strong>"},
+        {slug: 'matthieu-leroy', name: 'Matthieu Leroy', role: 'Cathéter Project Leader', bio: "Matthieu Leroy est un ingénieur en mécanique spécialisé dans le développement de produits complexes et la gestion de projets. Actuellement en poste en tant que chef de projet cathéter chez Open Stent Solution, Matthieu est responsable de la gestion du système de délivrance du dispositif de remplacement de la valve mitrale par voie transcathéter. Il apporte ses connaissances techniques, son expérience en gestion de projets, en gestion des fournisseurs et en gestion des opérations. Son rôle englobe la gestion complète du programme ainsi que les activités techniques et opérationnelles quotidiennes."},
+        {slug: 'eloise-kerignard', name: 'Eloïse Kerignard', role: 'Project Leader, Biological & Polymers', bio: "Eloïse Kerignard, cheffe de projet spécialisée dans les feuillets de valves cardiaques, apporte son expertise diversifiée en biotechnologies et sciences de la vie. Son rôle dans l'avancement des projets d'Open Stent Solution, incluant la gestion du développement des composants valvulaires, des matériaux, ainsi que la supervision de l'équipe de production des valves, démontre une compétence en gestion de projet essentielle. Cet engagement, allié à un esprit entrepreneurial, contribue de manière décisive au succès de ce projet complexe."},
+        {slug: 'stephane-parsaix', name: 'Stéphane Parsaix', role: 'Ingénieur cathéter R&D', bio: "Stéphane se distingue comme un ingénieur Cathéter R&D de premier plan dans le domaine des dispositifs médicaux, avec une solide expertise en conception de produits, micromécanique, et CAO. Au sein d'Open Stent Solution il joue un rôle décisif sur le développement du système de délivrance."},
+        {slug: 'mehdi-bordji', name: 'Mehdi Bordji', role: 'Project Leader, FEA & Simulations', bio: "Mehdi Bordji est un ingénieur R&D hautement qualifié, expérimenté et spécialisé dans l'Analyse par Éléments Finis (FEA). Avec une solide expérience dans les simulations numériques et la physique, il apporte des connaissances à l'équipe, en particulier dans les domaines de la mécanique cardiovasculaire, de l'hémodynamique et de la conception de dispositifs médicaux.</p><p>A l'aide de sa maîtrise de la FEA et de la Conception Assistée par Ordinateur (CAO), il joue un rôle essentiel dans le développement de composants critiques, veillant à ce qu'ils respectent les normes requises en termes d'efficacité et de sécurité."},
+        {slug: 'juliette-jonckheere', name: 'Juliette Jonckheere', role: 'Couturière de valve cardiaque', bio: "Juliette, couturière hautement qualifiée chez Open Stent Solution, apporte une expertise approfondie en couture et en patronage. Son expérience dans l'industrie textile démontre sa polyvalence en passant de manière fluide de la mode au domaine médical. En mettant à profit son expérience, Juliette apporte des compétences précieuses à la production de solutions médicales axée sur la précision chez Open Stent Solution. Sa maîtrise de la confection textile et son souci du détail la positionnent comme un atout précieux pour garantir les normes de qualité les plus élevées dans la création de valves médicales."},
+        {slug: 'alexandre-hadir', name: 'Alexandre Hadir', role: 'Project Leader, Mechanical Design', bio: "Alexandre Hadir, ingénieur R&D et chef de projet Stent chez Open Stent Solution, apporte une expertise approfondie en ingénierie mécanique et une solide expérience dans la conception de produits à la fois automobiles et médicaux. Son parcours professionnel englobe des rôles significatifs dans le développement de produits et l'industrialisation, démontrant sa polyvalence et sa profonde connaissance en ingénierie."},
+        {slug: 'melodie-bellegueule', name: 'Mélodie Bellegueule', role: 'Couturière de valve cardiaque', bio: "Mélodie est une couturière hautement qualifiée chez Open Stent Solution, spécialisée dans la production minutieuse de valves biologiques. Sa dévotion quotidienne tourne autour de la création méticuleuse de valves avec une précision de l'ordre du millimètre, visant une reproductibilité maximale. Forte de son expérience approfondie en tant qu'artisan du cuir dans le secteur de la maroquinerie de luxe, Mélodie intègre de manière fluide ses techniques de couture dans les processus de production chez Open Stent Solution."},
+        {slug: 'maurice-boulot', name: 'Maurice Boulot', role: 'Engineering & Characterization', bio: "Maurice a travaillé pendant plus de 30 ans dans la maintenance biomédicale au Centre Hospitalier Universitaire (CHU). Actuellement, il est responsable des machines d'essai chez Open Stent Solution, testant la performance hydrodynamique et la fatigue des valves. Maurice est également chargé de la fabrication d'autres machines pour les stents et les cathéters."}
+    ] %}
     <div class="sheet page-top">
         <section>
-            <p class="kicker">Notre équipe</p>
-            <h1 class="h2">Chirurgien, ingénieurs, couturières de valves.</h1>
+            <h1 class="h2">Notre <strong>équipe</strong></h1>
             <div class="crew">
-                {% for m in [
-                    ['Doron Carmi', 'Fondateur et CEO, chirurgien cardiaque, inventeur de la Cornelis™'],
-                    ['Hikmat Hojeibane', 'Directeur R&D et CTO'],
-                    ['Matthieu Leroy', 'Responsable projet cathéter'],
-                    ['Eloïse Kerignard', 'Responsable projet biologique et polymères'],
-                    ['Stéphane Parsaix', 'Ingénieur R&D cathéter'],
-                    ['Mehdi Bordji', 'Responsable simulations et calcul par éléments finis'],
-                    ['Alexandre Hadir', 'Responsable conception mécanique du stent'],
-                    ['Juliette Jonckheere', 'Couturière de valve cardiaque'],
-                    ['Mélodie Bellegueule', 'Couturière de valve cardiaque'],
-                    ['Maurice Boulot', 'Ingénierie et caractérisation']
-                ] %}
-                    <div><b>{{ m[0] }}</b><span>{{ m[1] }}</span></div>
+                {% for m in members %}
+                    <article class="member" data-controller="modal">
+                        <img src="{{ asset('images/team/' ~ m.slug ~ '.jpg') }}" alt="{{ m.name }}" width="700" loading="lazy" decoding="async">
+                        <div class="member-text">
+                            <h2>{{ m.name }}</h2>
+                            <p class="role">{{ m.role }}</p>
+                            <button type="button" class="more" data-action="modal#open">En savoir plus <span aria-hidden="true">&rsaquo;</span></button>
+                        </div>
+                        <dialog class="modal" data-modal-target="dialog" data-action="click->modal#backdrop" aria-label="{{ m.name }}">
+                            <button type="button" class="modal-close" data-action="modal#close" aria-label="Fermer">&times;</button>
+                            <img src="{{ asset('images/team/' ~ m.slug ~ '.jpg') }}" alt="" width="700" loading="lazy" decoding="async">
+                            <div class="modal-body">
+                                <h3>{{ m.name }}</h3>
+                                <p class="role">{{ m.role }}</p>
+                                <p>{{ m.bio|raw }}</p>
+                            </div>
+                        </dialog>
+                    </article>
                 {% endfor %}
             </div>
+            <p class="lorem-note">Nous remercions Virginie Sueur pour la qualité de ses photos.</p>
         </section>
     </div>
 {% endblock %}

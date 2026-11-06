@@ -63,7 +63,7 @@ a{color:inherit}
 .bar .cta:hover{background:var(--ink)}
 @media(max-width:860px){.bar nav{display:none}}
 body:has(.hero) .bar:not(.frosted) :is(.brand,nav a){color:#fff}
-body:has(.hero) .bar:not(.frosted) .brand em{color:var(--rose)}
+body:has(.hero) .bar:not(.frosted) .brand em{color:var(--accent)}
 
 /* ---------- hero ---------- */
 main{position:relative;z-index:10}
@@ -85,7 +85,7 @@ main{position:relative;z-index:10}
   white-space:nowrap;text-transform:uppercase}
 /* the grid item: its baseline, not its line box, lands on the line */
 .hero .word span{text-box:trim-both cap alphabetic}
-.hook{position:absolute;right:50%;top:calc(var(--heart-bottom) + clamp(18px,2.6vw,34px));z-index:3;
+.hook{position:absolute;right:calc(50% + clamp(28px,4vw,72px));top:calc(var(--heart-bottom) + clamp(18px,2.6vw,34px));z-index:3;
   max-width:40ch;text-align:right;font-size:clamp(1rem,1.3vw,1.2rem);line-height:1.45;
   color:rgba(255,255,255,.72)}
 /* ---------- scene 1: the heart cut open on its mitral valve ----------
@@ -197,6 +197,7 @@ main{position:relative;z-index:10}
 .slab p{color:var(--muted);max-width:70ch}
 .lorem-note{margin-top:14px;font-size:13.5px;color:var(--leaf);font-weight:600}
 .sheet section + section{border-top:1px solid rgba(31,16,17,.08)}
+#contact-teaser{border-top:0}   /* the last section runs straight into the footer */
 .sheet .kicker{margin-bottom:16px}
 .lede{margin-top:clamp(18px,2.2vw,28px);font-size:clamp(1.0625rem,1.25vw,1.25rem);
   line-height:1.5;color:var(--muted);max-width:52ch}
@@ -211,11 +212,29 @@ main{position:relative;z-index:10}
 .team p{color:var(--muted);font-size:16.5px;line-height:1.6;max-width:40ch}
 .team .act{display:inline-block;margin-top:clamp(18px,2.2vw,28px)}
 
-.crew{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+.crew{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
   gap:clamp(16px,2.2vw,28px);margin-top:clamp(28px,3.4vw,46px)}
-.crew div{background:var(--cream-2);border-radius:8px;padding:clamp(18px,2vw,24px)}
-.crew b{display:block;font-weight:600;letter-spacing:-.015em}
-.crew span{display:block;margin-top:5px;font-size:14.5px;color:var(--muted)}
+@media(max-width:620px){.crew{grid-template-columns:1fr}}
+.member{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);align-items:center;
+  background:var(--cream-2);border-radius:8px;overflow:hidden}
+.member > img{display:block;width:100%;height:100%;aspect-ratio:4/5;object-fit:cover;object-position:top}
+.member-text{padding:clamp(14px,1.8vw,24px)}
+.sheet .member h2{font-size:1.15rem;letter-spacing:-.015em;line-height:1.25;max-width:none}
+.role{margin-top:5px;font-size:14.5px;color:var(--muted)}
+.member .more{margin-top:14px;border:0;background:none;padding:0;font:inherit;cursor:pointer}
+
+/* the biography opens in a native modal <dialog> */
+.modal{width:min(720px,calc(100vw - 32px));max-height:calc(100vh - 48px);padding:0;border:0;
+  border-radius:12px;background:var(--cream);color:var(--ink);overflow:auto}
+.modal::backdrop{background:rgba(0,0,0,.6)}
+.modal[open]{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr)}
+.modal img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.modal-body{padding:clamp(20px,3vw,36px)}
+.modal-body h3{font-size:1.4rem;letter-spacing:-.02em;line-height:1.15}
+.modal-body p:not(.role){margin-top:14px;font-size:15.5px;line-height:1.6;color:var(--muted)}
+.modal-close{position:absolute;top:10px;right:12px;width:36px;height:36px;border:0;border-radius:50%;
+  background:var(--cream);color:var(--ink);font-size:24px;line-height:1;cursor:pointer}
+@media(max-width:620px){.modal[open]{grid-template-columns:1fr}.modal img{max-height:260px}}
 
 /* the only centred section on the page: a two-word title has nothing to align to */
 #partenaires{text-align:center}
@@ -283,18 +302,6 @@ main{position:relative;z-index:10}
 .qa details[open] summary::after{transform:rotate(-135deg);margin-top:-2px}
 .qa p{padding:0 0 20px;font-size:16px;line-height:1.6;color:var(--muted);max-width:66ch}
 
-/* ---------- footer: the page's only point of contact ----------
-   Full bleed: it is the one band that runs edge to edge, so the form and the
-   three link columns sit side by side instead of stacking down the page. */
-.foot{background:var(--card-ground);color:var(--light);padding-inline:var(--bar)}
-.foot .in{padding:clamp(52px,5.5vw,88px) var(--gut)}
-.foot .lorem-note{color:var(--rose)}   /* leaf on ink is too dark to read */
-.foot code{font:inherit;font-size:.95em;font-family:ui-monospace,Consolas,monospace}
-
-.foot-top{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));
-  gap:clamp(30px,3.6vw,72px)}
-@media(max-width:640px){.foot-top{grid-template-columns:1fr}}
-
 /* contact form, on the light page */
 .form{display:grid;grid-template-columns:minmax(0,1fr);max-width:560px;
   gap:14px;margin-top:clamp(22px,2.6vw,34px)}
@@ -311,19 +318,7 @@ main{position:relative;z-index:10}
   background:var(--forest);color:var(--cream);transition:background .18s}
 .form button:hover{background:var(--ink)}
 
-.foot-col h3{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--rose)}
-.foot-col ul{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:10px}
-.foot-col a{font-size:15px;color:var(--light);text-decoration:none;opacity:.82}
-.foot-col a:hover{opacity:1;text-decoration:underline;text-underline-offset:3px}
-.foot-col .lorem-note{margin-top:14px;font-size:12.5px}
 
-.foot-end{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;
-  margin-top:clamp(40px,5vw,72px);padding-top:24px;
-  border-top:1px solid rgba(246,236,236,.16);font-size:14px;color:var(--rose)}
-.foot-end span{margin-right:auto}
-.foot-end a{text-decoration:none}
-.foot-end a:hover{color:var(--light)}
 
 /* ---------- dev HUD ---------- */
 .hud{position:fixed;right:var(--bar);bottom:var(--bar);z-index:30;display:flex;flex-wrap:wrap;
@@ -363,3 +358,42 @@ main{position:relative;z-index:10}
 .say p:not(.kicker){color:rgba(246,236,236,.74)}
 /* a gradient carries the story's ground into the page before the team */
 .sheet--after-story{padding-top:60px;background:linear-gradient(var(--card-ground),var(--cream) 260px),var(--cream)}
+
+/* ---------- footer: a LinkedIn band with a curved edge, then three columns ---------- */
+/* the footer overlaps the page by a pixel: the page ends on a fractional pixel and the seam showed as a hairline */
+.foot{position:relative;z-index:11;margin-top:-2px}
+/* inverted: light band on top, dark body below */
+.foot-join{background:linear-gradient(180deg,var(--cream) calc(100% - 170px),color-mix(in srgb,var(--card-ground) 7%,var(--cream)) calc(100% - 142px),color-mix(in srgb,var(--card-ground) 26%,var(--cream)) calc(100% - 113px),color-mix(in srgb,var(--card-ground) 50%,var(--cream)) calc(100% - 85px),color-mix(in srgb,var(--card-ground) 74%,var(--cream)) calc(100% - 57px),color-mix(in srgb,var(--card-ground) 93%,var(--cream)) calc(100% - 28px),var(--card-ground));   /* eased (smoothstep) so no visible line where it starts */
+  color:var(--ink);text-align:center;
+  padding:clamp(110px,9vw,140px) var(--gut) 55px}
+.foot-join p{font-size:clamp(1.15rem,1.8vw,1.5rem)}
+.foot-join a{display:inline-grid;place-items:center;width:40px;height:40px;margin-top:14px;
+  border-radius:4px;background:var(--card-ground);color:var(--light)}
+.foot-join svg{width:26px;height:26px;fill:currentColor}
+.foot-main{
+  background:var(--card-ground);
+  color:var(--light);padding:clamp(24px,2.6vw,36px) var(--gut) clamp(18px,2vw,28px)}
+.foot-cols{display:grid;grid-template-columns:repeat(3,auto);justify-content:center;
+  gap:0 clamp(24px,4vw,56px)}
+.foot-cols > div{padding-inline:clamp(0px,2vw,28px)}
+.foot-cols > div + div{border-left:1px solid rgba(246,236,236,.2)}
+.foot-cols h3{font-size:1.25rem;font-weight:600;letter-spacing:-.01em}
+.foot-cols h3 span{font-weight:300}
+.foot-cols .brand-line{font-size:1.4rem;font-weight:600;letter-spacing:-.04em;margin-bottom:12px}
+.foot-cols .brand-line em{font-style:normal;color:var(--accent)}
+.foot-cols p,.foot-cols li{font-size:15px;line-height:1.5;color:rgba(246,236,236,.74)}
+.foot-cols ul{list-style:none;margin:14px 0 0;padding:0}
+.foot-cols a{color:inherit;text-decoration:none}
+.foot-cols a:hover{text-decoration:underline;text-underline-offset:3px}
+.foot-cols address{font-style:normal;margin-top:14px;font-size:15px;line-height:1.5;color:rgba(246,236,236,.74)}
+.foot-cols address b{font-weight:500;color:var(--light)}
+.foot-legal{display:flex;flex-wrap:wrap;justify-content:space-between;max-width:70%;margin-inline:auto;gap:6px clamp(20px,3vw,40px);margin-top:clamp(18px,2vw,28px);font-size:15px}
+.foot-legal a{color:rgba(246,236,236,.74);text-decoration:none}
+.foot-legal a:hover{text-decoration:underline;text-underline-offset:3px}
+@media(max-width:760px){
+  .foot-cols{grid-template-columns:1fr;gap:28px}
+  .foot-cols > div + div{border-left:0;border-top:1px solid rgba(246,236,236,.2);padding-top:24px}
+}
+
+/* the FAQ now lives inside the about section: give its title room */
+.faq-title{margin-top:clamp(44px,5vw,72px)}
