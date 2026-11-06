@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}OpenStent{% endblock %}
+
+{% block importmap %}{{ importmap(['app', 'hero']) }}{% endblock %}
+
+{% block body %}
+    <div class="story">
+        <div class="story-stage" aria-hidden="true">
+            <canvas id="valve" data-glb="{{ asset('models/valve-parts.glb') }}"></canvas>
+        </div>
+        {% include 'home/_hero.html.twig' %}
+        {% include 'home/_pathology.html.twig' %}
+        {% include 'home/_solution.html.twig' %}
+    </div>
+    <div class="sheet sheet--after-story">
+        {% for s in ['team', 'feed', 'questions', 'contact'] %}
+            {% include 'home/_' ~ s ~ '.html.twig' %}
+        {% endfor %}
+    </div>
+    {% include 'home/_hud.html.twig' %}
+{% endblock %}

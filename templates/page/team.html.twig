@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Équipe{% endblock %}
+
+{% block body %}
+    <div class="sheet page-top">
+        <section>
+            <p class="kicker">Notre équipe</p>
+            <h1 class="h2">Chirurgien, ingénieurs, couturières de valves.</h1>
+            <div class="crew">
+                {% for m in [
+                    ['Doron Carmi', 'Fondateur et CEO, chirurgien cardiaque, inventeur de la Cornelis™'],
+                    ['Hikmat Hojeibane', 'Directeur R&D et CTO'],
+                    ['Matthieu Leroy', 'Responsable projet cathéter'],
+                    ['Eloïse Kerignard', 'Responsable projet biologique et polymères'],
+                    ['Stéphane Parsaix', 'Ingénieur R&D cathéter'],
+                    ['Mehdi Bordji', 'Responsable simulations et calcul par éléments finis'],
+                    ['Alexandre Hadir', 'Responsable conception mécanique du stent'],
+                    ['Juliette Jonckheere', 'Couturière de valve cardiaque'],
+                    ['Mélodie Bellegueule', 'Couturière de valve cardiaque'],
+                    ['Maurice Boulot', 'Ingénierie et caractérisation']
+                ] %}
+                    <div><b>{{ m[0] }}</b><span>{{ m[1] }}</span></div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+{% endblock %}

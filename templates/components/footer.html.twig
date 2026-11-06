@@ -1,0 +1,58 @@
+<footer class="foot" id="contact">
+    <div class="in">
+        <div class="foot-top">
+            <div class="foot-form">
+                <p class="kicker">Écrivez-nous</p>
+                <form class="form" method="post" action="#">
+                    <label>Vous êtes
+                        <select name="profil" required>
+                            <option value="">Choisir…</option>
+                            <option>Patient ou proche</option>
+                            <option>Soignant</option>
+                            <option>Presse</option>
+                            <option>Autre</option>
+                        </select>
+                    </label>
+                    <label>Email
+                        <input type="email" name="email" required autocomplete="email" placeholder="vous@exemple.fr">
+                    </label>
+                    <label class="wide">Message
+                        <textarea name="message" required rows="3"></textarea>
+                    </label>
+                    <button type="submit">Envoyer</button>
+                </form>
+                <p class="lorem-note">Formulaire non branché.</p>
+            </div>
+
+            <nav class="foot-col" aria-labelledby="fc-more">
+                <h3 id="fc-more">En savoir plus</h3>
+                <ul>
+                    <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                    <li><a href="{{ path('app_team') }}">Équipe</a></li>
+                    <li><a href="{{ path('app_about') }}">À propos</a></li>
+                    <li><a href="{{ path('app_contact') }}">Contact</a></li>
+                </ul>
+            </nav>
+
+            <nav class="foot-col" aria-labelledby="fc-legal">
+                <h3 id="fc-legal">Mentions légales</h3>
+                <ul>
+                    <li><a href="#">Mentions légales</a></li>
+                    <li><a href="#">Conditions générales d'utilisation</a></li>
+                </ul>
+            </nav>
+
+            <nav class="foot-col" aria-labelledby="fc-social">
+                <h3 id="fc-social">Réseaux sociaux</h3>
+                <ul>
+                    <li><a href="https://fr.linkedin.com/company/open-stent-solution" target="_blank" rel="noopener">LinkedIn</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="foot-end">
+            <span>&copy; {{ 'now'|date('Y') }} OpenStent</span>
+            <a href="#top">Haut de page &uarr;</a>
+        </div>
+    </div>
+</footer>

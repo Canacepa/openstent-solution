@@ -27,4 +27,7 @@ return [
     '@hotwired/stimulus' => ['version' => '3.2.2'],
     '@symfony/stimulus-bundle' => ['path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js'],
     '@hotwired/turbo' => ['version' => '8.0.23'],
+    'hero' => ['path' => './assets/hero/main.js', 'entrypoint' => true],
+    'three' => ['version' => '0.187.0'],
+    'three/addons/loaders/GLTFLoader.js' => ['version' => '0.187.0'],
 ];

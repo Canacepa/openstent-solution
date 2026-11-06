@@ -1,3 +1,373 @@
-body {
-    background-color: skyblue;
+@font-face{font-family:"Albert Sans";font-style:normal;font-weight:100 900;font-display:swap;
+  src:url('../fonts/albert-sans.woff2') format("woff2")}
+
+:root{
+  --cream:#F3F0E6;          /* off-white, pulled a touch toward the leaf hue */
+  --cream-2:#EDE9DC;
+  --forest:#324B00;
+  --leaf:#510000;          /* accent text */
+  --sage:#AFB696;
+  --link:#003131;
+  --night:#170A0B;          /* black warmed toward the blood */
+  --ink:#171C16;
+  --muted:#4A5545;
+  --bar:10px;               /* the frost bar's margin */
+  --page:1180px;            /* content box, shared by the bar and every section */
+  --gut:clamp(22px,3.6vw,56px);
+  --expo:cubic-bezier(.87,0,.13,1);   /* CSS stand-in for GSAP's expo.inOut */
 }
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--ink);
+  font:400 17px/1.55 "Albert Sans","Segoe UI",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.035em;line-height:1.02;text-wrap:balance}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--forest);outline-offset:3px;border-radius:4px}
+::selection{background:var(--forest);color:var(--cream)}
+
+/* ---------- the canvas sits behind the first screen ---------- */
+#stage{position:absolute;inset:0;z-index:0;pointer-events:none}
+#gl{display:block;width:100%;height:100%}
+
+/* ---------- frosted navbar ---------- */
+.bar{position:fixed;top:var(--bar);left:var(--bar);right:var(--bar);z-index:30;
+  max-width:calc(var(--page) * 1.2);margin-inline:auto;   /* bar runs 20% wider than the content box */
+  border-radius:8px;display:flex;align-items:center;gap:clamp(14px,2.6vw,34px);
+  padding-inline:var(--gut);height:64px}
+/* the frost lives on its own layer and fades in by opacity — browsers interpolate
+   opacity reliably, backdrop-filter they mostly don't */
+.bar::before{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;
+  background:rgba(243,240,230,.62);
+  -webkit-backdrop-filter:blur(16px) saturate(160%);
+  backdrop-filter:blur(16px) saturate(160%);
+  box-shadow:inset 0 0 0 1px rgba(23,28,22,.07),0 6px 22px -14px rgba(23,28,22,.4);
+  opacity:0;transition:opacity .5s cubic-bezier(.22,.61,.36,1)}
+.bar.frosted::before{opacity:1}
+@supports not (backdrop-filter:blur(2px)){
+  .bar::before{background:rgba(243,240,230,.94)}
+}
+.brand{font-weight:600;font-size:18px;letter-spacing:-.05em;text-decoration:none;
+  margin-right:auto;white-space:nowrap}
+.brand em{font-style:normal;color:var(--forest)}
+.bar nav{display:flex;gap:clamp(12px,1.8vw,26px)}
+.bar nav a{font-size:14.5px;text-decoration:none;color:var(--muted);white-space:nowrap}
+.bar nav a:hover{color:var(--ink)}
+.bar .cta{font-size:14px;font-weight:600;text-decoration:none;white-space:nowrap;
+  padding:9px 18px;border-radius:999px;background:var(--forest);color:var(--cream);
+  transition:background .18s}
+.bar .cta:hover{background:var(--ink)}
+@media(max-width:860px){.bar nav{display:none}}
+body:has(.hero) .bar:not(.frosted) :is(.brand,nav a){color:#fff}
+body:has(.hero) .bar:not(.frosted) .brand em{color:var(--sage)}
+
+/* ---------- hero ---------- */
+main{position:relative;z-index:10}
+/* Dark, warm ground. Bottom to top: the blood flow, the heart, the word over it.
+   Its run sits above the beats, and its opaque ground hides the sticky valve until
+   the hero fades out, one screen after scene 1. heart.js sets --heart-bottom: the word sits on the heart's lowest point and
+   the hook hangs just under it. */
+.hero-run{position:relative;z-index:3;height:300svh;margin-bottom:-200svh;
+  pointer-events:none}   /* its empty lower half lies over the first beat */
+.hero-run .hero{pointer-events:auto}
+.hero{position:sticky;top:0;min-height:100svh;overflow:hidden;
+  background:color-mix(in srgb,var(--sage) calc(var(--ground,0) * 100%),var(--night));display:grid;place-items:center;--heart-bottom:75%;
+  will-change:opacity}
+.hero #stage{z-index:0}
+#heart{position:absolute;inset:0;z-index:1;width:100%;height:100%;display:block;pointer-events:none}
+.hero .word{position:absolute;left:0;right:0;top:0;height:var(--heart-bottom);z-index:2;
+  display:grid;place-items:end center;padding-inline:var(--gut);
+  font:400 16.5vw/1 "Cal Sans",sans-serif;letter-spacing:-.04em;color:var(--cream);
+  white-space:nowrap;text-transform:uppercase}
+/* the grid item: its baseline, not its line box, lands on the line */
+.hero .word span{text-box:trim-both cap alphabetic}
+.hook{position:absolute;right:50%;top:calc(var(--heart-bottom) + clamp(18px,2.6vw,34px));z-index:3;
+  max-width:40ch;text-align:right;font-size:clamp(1rem,1.3vw,1.2rem);line-height:1.45;
+  color:rgba(255,255,255,.72)}
+/* ---------- scene 1: the heart cut open on its mitral valve ----------
+   It lives in the pinned hero so it shares the heart's canvas. hero-shader.js sets
+   --scene (0..1) as the zoom lands; heart.js sets --mx/--my, the valve on screen. */
+.scene{position:absolute;inset:0;z-index:3;pointer-events:none;
+  width:100%;max-width:var(--page);margin-inline:auto;padding-inline:var(--gut);
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;
+  opacity:var(--scene,0)}
+/* no card: the text sits straight on a dark veil drawn over the left of the screen */
+.scene::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(90deg,rgba(23,10,11,.92) 0%,rgba(23,10,11,.78) 28%,
+    rgba(23,10,11,.35) 48%,rgba(23,10,11,0) 62%)}
+.scene .card{grid-column:1;max-width:30rem;color:var(--cream);
+  text-shadow:0 1px 18px rgba(23,10,11,.6);
+  transform:translateY(calc((1 - var(--scene,0)) * 24px))}
+.scene .kicker{color:#E0574C;margin-bottom:12px}
+.scene h3{font-size:clamp(1.3rem,2.2vw,1.75rem);letter-spacing:-.025em;line-height:1.15}
+.scene .card p:not(.kicker){margin-top:14px;font-size:16.5px;line-height:1.6;
+  color:rgba(243,240,230,.74);max-width:42ch}
+/* the label hangs over the annulus on a short rule */
+.tag{position:absolute;left:var(--mx,66.667%);top:var(--my,50%);z-index:3;
+  transform:translate(-50%,calc(-100% - 34px));opacity:var(--scene,0);pointer-events:none;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--cream);white-space:nowrap}
+.tag::after{content:"";width:1px;height:26px;background:var(--cream);opacity:.8}
+@media(max-width:900px){
+  .scene{grid-template-columns:1fr;align-items:end;padding-bottom:clamp(24px,6vh,56px)}
+  /* one column: the text is at the bottom, so the veil rises from there */
+  .scene::before{background:linear-gradient(0deg,rgba(23,10,11,.92) 0%,rgba(23,10,11,.7) 32%,
+    rgba(23,10,11,0) 58%)}
+}
+
+.kicker{font-size:13.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--leaf);margin-bottom:22px}
+.act{font-size:15px;font-weight:600;text-decoration:none;padding:13px 26px;border-radius:999px;
+  background:var(--forest);color:var(--cream);transition:background .18s,transform .18s}
+.act:hover{background:var(--ink);transform:translateY(-2px)}
+.act--ghost{background:transparent;color:var(--forest);box-shadow:inset 0 0 0 1.5px var(--forest)}
+.act--ghost:hover{background:var(--forest);color:var(--cream)}
+
+/* ---------- the scrollytelling stage ----------
+   One sticky layer holds the valve for the whole run. The negative margin takes it
+   back out of the flow, so the hero and the beats scroll over it instead of after it. */
+.story{position:relative}
+.story-stage{position:sticky;top:0;height:100svh;margin-bottom:-100svh;
+  z-index:1;pointer-events:none;display:grid;place-items:center}
+.story-stage canvas{display:block;width:min(44vw,540px);aspect-ratio:1;
+  will-change:transform,opacity}
+@media(max-width:900px){.story-stage{display:none}}   /* one column: the text wins */
+
+/* ---------- beats: the scroll interruptions ---------- */
+.beat{position:relative;z-index:4;
+  max-width:var(--page);margin-inline:auto;padding-inline:var(--gut);
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(24px,4vw,64px);align-items:start}
+.beat-col{grid-column:1;display:grid}
+.beat--right .beat-col{grid-column:2}
+
+/* Each text gets its own slot of scroll distance, and is the only sticky child of it —
+   so its hold is the full slot minus its own height, not a range shared with siblings.
+   Pinned at 50svh then pulled back by half its height, it lands exactly on the viewport
+   centre, where the valve also sits, whatever the text's length. */
+.slot{height:110svh}
+.say{position:sticky;top:50svh;transform:translateY(-50%);
+  opacity:0;will-change:opacity,transform;
+  padding:clamp(22px,2.6vw,36px)}   /* no box: the text sits straight on the page */
+.say .kicker{margin-bottom:12px}
+.say h3{font-size:clamp(1.3rem,2.2vw,1.75rem);letter-spacing:-.025em;line-height:1.15}
+.say p{margin-top:14px;font-size:16.5px;line-height:1.6;color:var(--muted);max-width:42ch}
+
+@media(max-width:900px){
+  .beat{grid-template-columns:1fr}
+  .beat-col,.beat--right .beat-col{grid-column:1}
+  .slot{height:auto}
+  .say{position:static;transform:none;opacity:1;margin-block:clamp(20px,4vw,40px)}
+}
+
+/* ---------- scroll cue ---------- */
+.cue{position:absolute;left:50%;bottom:clamp(24px,4.5vh,48px);transform:translateX(-50%);z-index:3;
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  text-decoration:none;transition:opacity .3s}
+.cue .rail{width:1px;height:38px;background:rgba(23,28,22,.18);overflow:hidden;position:relative}
+.cue .rail i{position:absolute;inset:0;background:var(--forest);
+  animation:fall 1.9s cubic-bezier(.65,0,.35,1) infinite}
+@keyframes fall{0%{transform:translateY(-100%)}60%,100%{transform:translateY(100%)}}
+.cue:hover{color:var(--ink)}
+.cue.gone{opacity:0;pointer-events:none}
+.hero .cue{color:rgba(255,255,255,.6)}
+.hero .cue:hover{color:#fff}
+.hero .cue .rail{background:rgba(255,255,255,.2)}
+.hero .cue .rail i{background:#fff}
+.cue .rail{height:clamp(30px,4.5vh,44px)}
+
+/* ---------- the page that covers the canvas ---------- */
+.sheet{background:var(--cream);position:relative;z-index:10}
+.sheet{padding-inline:var(--bar)}
+.sheet section{padding-block:clamp(64px,7vw,120px);padding-inline:var(--gut);
+  max-width:var(--page);margin-inline:auto}
+.sheet :is(h2,.h2){font-size:clamp(1.9rem,3.4vw,3rem);max-width:18ch}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(22px,3vw,52px);
+  margin-top:clamp(26px,3vw,44px)}
+@media(max-width:760px){.cols{grid-template-columns:1fr}}
+.cols p{color:var(--muted);font-size:16.5px;line-height:1.6}
+.slab{background:var(--cream-2);border-radius:8px;padding:clamp(24px,3vw,44px);
+  margin-top:clamp(26px,3vw,44px)}
+.slab p{color:var(--muted);max-width:70ch}
+.lorem-note{margin-top:14px;font-size:13.5px;color:var(--leaf);font-weight:600}
+.sheet section + section{border-top:1px solid rgba(23,28,22,.08)}
+.sheet .kicker{margin-bottom:16px}
+.lede{margin-top:clamp(18px,2.2vw,28px);font-size:clamp(1.0625rem,1.25vw,1.25rem);
+  line-height:1.5;color:var(--muted);max-width:52ch}
+
+/* team */
+.team{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);
+  gap:clamp(24px,3.4vw,56px);align-items:center;margin-top:clamp(26px,3vw,44px)}
+@media(max-width:760px){.team{grid-template-columns:1fr}}
+.team figure{margin:0;border-radius:8px;overflow:hidden;background:var(--cream-2)}
+/* width/height are on the <img> too, so the box is reserved before the file lands */
+.team img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover}
+.team p{color:var(--muted);font-size:16.5px;line-height:1.6;max-width:40ch}
+.team .act{display:inline-block;margin-top:clamp(18px,2.2vw,28px)}
+
+.crew{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:clamp(16px,2.2vw,28px);margin-top:clamp(28px,3.4vw,46px)}
+.crew div{background:var(--cream-2);border-radius:8px;padding:clamp(18px,2vw,24px)}
+.crew b{display:block;font-weight:600;letter-spacing:-.015em}
+.crew span{display:block;margin-top:5px;font-size:14.5px;color:var(--muted)}
+
+/* the only centred section on the page: a two-word title has nothing to align to */
+#partenaires{text-align:center}
+#partenaires h2{max-width:none;margin-inline:auto}
+#partenaires .partners{justify-content:center}
+
+/* partners — logos vary wildly in aspect, so height is the only shared measure */
+.partners{list-style:none;margin:clamp(28px,3.4vw,46px) 0 0;padding:0;
+  display:flex;flex-wrap:wrap;align-items:center;gap:clamp(26px,4vw,64px)}
+/* three of the five logos ship on an opaque white plate; multiply drops it into
+   the cream instead of leaving pale rectangles on the page */
+.partners img{display:block;height:clamp(40px,4.4vw,58px);width:auto;
+  filter:grayscale(1);opacity:.62;mix-blend-mode:multiply}
+
+/* news lead — thumbnail on the right, mirroring .team which puts it on the left */
+.lead{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);
+  gap:clamp(24px,3.4vw,56px);align-items:center;
+  margin-top:clamp(28px,3.4vw,46px);padding-bottom:clamp(28px,3.4vw,46px);
+  border-bottom:1px solid rgba(23,28,22,.08)}
+@media(max-width:760px){.lead{grid-template-columns:1fr}}
+.lead time{display:block;font-size:13.5px;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--leaf);font-variant-numeric:tabular-nums}
+.lead h3{margin-top:12px;font-size:clamp(1.35rem,2.4vw,1.95rem);
+  letter-spacing:-.025em;line-height:1.14;max-width:20ch}
+.lead p{margin-top:14px;font-size:16.5px;line-height:1.6;color:var(--muted);max-width:46ch}
+.lead .more{margin-top:20px}
+/* hatched so an empty slot reads as "image pending", not as a broken box */
+.thumb{aspect-ratio:3/2;border-radius:8px;background:var(--cream-2);
+  background-image:repeating-linear-gradient(45deg,
+    rgba(23,28,22,.05) 0 10px,transparent 10px 20px)}
+
+/* "see more" — the same affordance on the lead and on every feed entry */
+.more{display:inline-flex;align-items:center;gap:.4em;
+  font-size:14px;font-weight:600;color:var(--link);text-decoration:none;
+  white-space:nowrap}
+.more span{transition:transform .18s}
+.more:hover{text-decoration:underline;text-underline-offset:3px}
+.more:hover span{transform:translateX(3px)}
+.feed .more{margin-top:12px}
+
+/* news — newest first, dates doing the talking */
+.feed{list-style:none;margin:clamp(28px,3.4vw,46px) 0 0;padding:0}
+/* the three previews share the lead's grid, so their text block is exactly the
+   width of the lead's — same left edge, same measure, one rail down the section */
+.feed li{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);
+  gap:10px clamp(24px,3.4vw,56px);   /* row gap tight: the date sits on the title */
+  padding:clamp(20px,2.4vw,30px) 0}
+.feed li > *{grid-column:1}
+.feed li + li{border-top:1px solid rgba(23,28,22,.08)}
+@media(max-width:760px){.feed li{grid-template-columns:1fr}}
+.feed time{display:block;font-size:13.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--leaf);font-variant-numeric:tabular-nums}
+.feed b{font-weight:600;letter-spacing:-.015em;font-size:17.5px}
+.feed p{margin-top:6px;font-size:15.5px;line-height:1.55;color:var(--muted);max-width:46ch}
+
+/* FAQ — native <details>, no script */
+.qa{margin-top:clamp(28px,3.4vw,46px);border-top:1px solid rgba(23,28,22,.08)}
+.qa details{border-bottom:1px solid rgba(23,28,22,.08)}
+.qa summary{cursor:pointer;list-style:none;padding:19px 44px 19px 0;position:relative;
+  font-weight:600;font-size:17.5px;letter-spacing:-.015em}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::after{content:"";position:absolute;right:8px;top:50%;width:11px;height:11px;
+  margin-top:-7px;border-right:1.5px solid var(--forest);border-bottom:1.5px solid var(--forest);
+  transform:rotate(45deg);transition:transform .2s}
+.qa details[open] summary::after{transform:rotate(-135deg);margin-top:-2px}
+.qa p{padding:0 0 20px;font-size:16px;line-height:1.6;color:var(--muted);max-width:66ch}
+
+/* ---------- footer: the page's only point of contact ----------
+   Full bleed: it is the one band that runs edge to edge, so the form and the
+   three link columns sit side by side instead of stacking down the page. */
+.foot{background:var(--ink);color:var(--cream);padding-inline:var(--bar)}
+.foot .in{padding:clamp(52px,5.5vw,88px) var(--gut)}
+.foot .lorem-note{color:var(--sage)}   /* leaf on ink is too dark to read */
+.foot code{font:inherit;font-size:.95em;font-family:ui-monospace,Consolas,monospace}
+
+.foot-top{display:grid;
+  grid-template-columns:minmax(360px,1.3fr) repeat(3,minmax(150px,.6fr));
+  gap:clamp(30px,3.6vw,72px)}
+@media(max-width:1080px){
+  .foot-top{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .foot-form{grid-column:1/-1}
+}
+@media(max-width:640px){.foot-top{grid-template-columns:1fr}}
+
+/* compact: one column so every field is the textarea's width, 3-row textarea */
+.form{display:grid;grid-template-columns:minmax(0,1fr);
+  gap:12px;margin-top:clamp(20px,2.2vw,28px)}
+.form label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--sage)}
+.form .wide{grid-column:1/-1}
+.form input,.form select,.form textarea{font:inherit;font-size:15px;color:var(--cream);
+  background:rgba(243,240,230,.07);border:0;box-shadow:inset 0 0 0 1px rgba(243,240,230,.2);
+  border-radius:6px;padding:10px 12px;width:100%}
+.form textarea{resize:vertical;min-height:76px}
+.form select{appearance:none;cursor:pointer}
+.form option{color:var(--ink)}
+.form :focus-visible{outline:2px solid var(--sage);outline-offset:2px}
+.form button{grid-column:1/-1;justify-self:start;font:inherit;font-size:14.5px;font-weight:600;
+  border:0;cursor:pointer;padding:11px 24px;border-radius:999px;
+  background:var(--cream);color:var(--ink);transition:background .18s}
+.form button:hover{background:var(--sage)}
+
+.foot-col h3{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--sage)}
+.foot-col ul{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:10px}
+.foot-col a{font-size:15px;color:var(--cream);text-decoration:none;opacity:.82}
+.foot-col a:hover{opacity:1;text-decoration:underline;text-underline-offset:3px}
+.foot-col .lorem-note{margin-top:14px;font-size:12.5px}
+
+.foot-end{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;
+  margin-top:clamp(40px,5vw,72px);padding-top:24px;
+  border-top:1px solid rgba(243,240,230,.16);font-size:14px;color:var(--sage)}
+.foot-end span{margin-right:auto}
+.foot-end a{text-decoration:none}
+.foot-end a:hover{color:var(--cream)}
+
+/* ---------- dev HUD ---------- */
+.hud{position:fixed;right:var(--bar);bottom:var(--bar);z-index:30;display:flex;flex-wrap:wrap;
+  width:max-content;max-width:min(92vw,430px);
+  gap:8px 16px;align-items:center;font-size:12.5px;color:var(--muted);
+  background:rgba(243,240,230,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  box-shadow:inset 0 0 0 1px rgba(23,28,22,.07);border-radius:8px;padding:9px 13px}
+.hud b{color:var(--ink);font-weight:600}
+.hud label{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.hud input[type=range]{width:88px;accent-color:var(--forest)}
+.hud .rd{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600;
+  min-width:3.2em;text-align:right}
+.hud .summary{flex-basis:100%;font:400 11.5px/1.55 ui-monospace,Consolas,monospace;
+  color:var(--muted);overflow-wrap:anywhere;-webkit-user-select:all;user-select:all;
+  padding-top:2px}
+.hud button{margin-left:2px}
+.hud button{border:0;background:var(--forest);color:var(--cream);border-radius:6px;
+  padding:6px 11px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.hud summary{cursor:pointer;list-style:none;font-weight:600;color:var(--ink);
+  margin-right:4px}
+.hud[open]{max-width:min(92vw,430px)}
+.hud summary::-webkit-details-marker{display:none}
+
+
+
+/* sub-pages have no hero: the fixed bar needs room */
+.page-top{padding-top:calc(64px + var(--bar))}
+.hud{display:none}
+/* the scene-1 card holds only while the heart is zoomed on the valve */
+@media(min-width:901px){#pathology .slot:first-child{height:60svh}}
+
+/* the story sits on a mid-tone sage ground: dark text, the implant is drawn in red; the hero's ground turns sage as the heart is zoomed */
+.story{background:var(--sage)}
+.say{color:var(--ink)}
+.say .kicker{color:var(--forest)}
+.say h3{color:var(--ink)}
+.say p:not(.kicker){color:var(--ink);opacity:.78}
+/* a gradient carries the story's ground into the page before the team */
+.sheet--after-story{background:linear-gradient(var(--sage),var(--cream) 320px),var(--cream)}
+
+/* the label over the valve is read on the sage ground */
+.tag{color:var(--ink)}
+.tag::after{background:var(--ink)}
