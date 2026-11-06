@@ -363,7 +363,7 @@ void main(){
     for (var i = 0; i < aside.length; i++) aside[i].style.opacity = away;
     // the card lands with the zoom and leaves before the hero fades, so it never
     // crosses the next card
-    hero.style.setProperty('--scene', (smooth((s - 0.7) / 0.3) * (1 - smooth((s - 1.05) / 0.25))).toFixed(3));
+    hero.style.setProperty('--scene', (smooth((s - 0.35) / 0.4) * (1 - smooth((s - 1.0) / 0.3))).toFixed(3));
     hero.style.setProperty('--ground', smooth((s - 0.4) / 0.5).toFixed(3));   // black -> card ground with the zoom
     var f = smooth((s - 1.0) / 0.4);   // the heart is gone by the second card
     hero.style.opacity = (1 - f).toFixed(3);

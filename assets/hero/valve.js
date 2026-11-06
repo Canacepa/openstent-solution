@@ -8,7 +8,7 @@ const story = document.querySelector('.story');
 if (cv && story) {
 
 // the fill is the story's ground colour (it only hides the edges behind it)
-const CREAM = 0x2E0C0E, FOREST = 0xB3222A;   // FOREST: the line colour, now the heart's red
+const CREAM = 0x2E0C0E, FOREST = 0xFFFFFF;   // FOREST: the line colour, now white
 
 const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
 renderer.setClearAlpha(0);

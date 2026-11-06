@@ -111,7 +111,7 @@ main{position:relative;z-index:10}
   transform:translate(-50%,calc(-100% - 34px));opacity:var(--scene,0);pointer-events:none;
   display:flex;flex-direction:column;align-items:center;gap:8px;
   font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--light);white-space:nowrap}
+  color:var(--light);white-space:nowrap}   /* dark: it sits on the light inside of the heart */
 .tag::after{content:"";width:1px;height:26px;background:var(--light);opacity:.8}
 @media(max-width:900px){
   .scene{grid-template-columns:1fr;align-items:end;padding-bottom:clamp(24px,6vh,56px)}
@@ -134,7 +134,7 @@ main{position:relative;z-index:10}
 .story{position:relative}
 .story-stage{position:sticky;top:0;height:100svh;margin-bottom:-100svh;
   z-index:1;pointer-events:none;display:grid;place-items:center}
-.story-stage canvas{display:block;width:min(44vw,540px);aspect-ratio:1;
+.story-stage canvas{display:block;width:min(54vw,680px);aspect-ratio:1;
   will-change:transform,opacity}
 @media(max-width:900px){.story-stage{display:none}}   /* one column: the text wins */
 
