@@ -365,7 +365,7 @@ void main(){
     // crosses the next card
     hero.style.setProperty('--scene', (smooth((s - 0.7) / 0.3) * (1 - smooth((s - 1.05) / 0.25))).toFixed(3));
     hero.style.setProperty('--ground', smooth((s - 0.4) / 0.5).toFixed(3));   // night -> sage with the zoom
-    var f = smooth((s - 1.2) / 0.7);
+    var f = smooth((s - 1.0) / 0.4);   // the heart is gone by the second card
     hero.style.opacity = (1 - f).toFixed(3);
     hero.style.visibility = f >= 1 ? 'hidden' : '';
   }

@@ -95,13 +95,20 @@ function size() {
   // the ortho frustum depends on scroll as well as size, so draw() owns it
 }
 
-// how far we are through the pinned run: 0 as the first beat reaches the top (the hero
-// stays pinned over its first card), 1 once it releases
-const firstBeat = story.querySelector('.beat');
-function progress() {
-  const top = firstBeat.getBoundingClientRect().top;
-  const span = story.getBoundingClientRect().bottom - top - innerHeight;
-  return span <= 0 ? 0 : clamp(-top / span, 0, 1);
+// where we are among the cards, as a fraction of their index: 0 on the first card (the
+// zoomed heart), 1 on "une impasse" (leaflets), 2 on the Cornelis card (arms), 3 on the
+// last one (flange). Linear between the scroll positions that centre two cards.
+const slots = [...document.querySelectorAll('.slot')];
+function stage() {
+  const c = slots.map(el => {
+    const r = el.getBoundingClientRect();
+    return r.top + r.height / 2 - innerHeight / 2 + scrollY;
+  });
+  if (scrollY <= c[0]) return 0;
+  for (let i = 1; i < c.length; i++) {
+    if (scrollY <= c[i]) return i - 1 + (scrollY - c[i - 1]) / (c[i] - c[i - 1]);
+  }
+  return c.length - 1;
 }
 
 function setOpacity(name, v) {
@@ -127,33 +134,28 @@ function fadeText() {
 function draw() {
   fadeText();
   if (!ready) return;
-  const p = progress();
+  const u = stage();
 
-  // --- the parts arrive in the order the discourse needs them, and leave together ---
-  const exit = 1 - ramp(p, 0.88, 1);
-  const leaflets = exit;                                       // present from the start
-  const arms     = ramp(p, 0.20, 0.34) * exit;
-  const flange   = ramp(p, 0.56, 0.70) * exit;
+  // --- each part arrives with its card: leaflets from the start, arms on the Cornelis
+  // card, flange on the last one ---
+  const leaflets = 1;
+  const arms     = ramp(u, 1.55, 1.9);
+  const flange   = ramp(u, 2.55, 2.9);
 
-  // --- crossing the page: fade out on the right, reappear on the left ---
-  // the swap happens inside the invisible window, so nothing is seen sliding across
-  const out = ramp(p, 0.40, 0.47);            // 0 -> 1 fade out
-  const back = ramp(p, 0.47, 0.56);           // 0 -> 1 fade back in
-  const vis = Math.min(1 - out + back, 1);
-
-  const onLeft = p >= 0.47;
-  const tx = (onLeft ? -1 : 1) * travel;
+  // --- crossing the page: it glides from the right column to the left one between the
+  // "impasse" card and the Cornelis card ---
+  const tx = lerp(travel, -travel, ramp(u, 1.15, 1.85));
   cv.style.transform = 'translateX(' + tx.toFixed(1) + 'px)';
-  cv.style.opacity = vis.toFixed(3);
+  cv.style.opacity = 1;
 
   setOpacity('leaflets', leaflets);
   setOpacity('arms', arms);
   setOpacity('flange', flange);
 
-  // --- the camera retreats as the implant grows, so each part arrives framed ---
+  // --- the camera retreats as the arms grow, so each part arrives framed ---
   // It must lead the arms slightly: they reach the full 41mm radius, so a retreat
   // slower than their fade-in leaves them clipped against the canvas edge.
-  const r = lerp(rLeaf, rAll, ramp(p, 0.17, 0.35)) * 1.06;
+  const r = lerp(rLeaf, rAll, ramp(u, 1.4, 1.8)) * 1.06;
   const b = cv.getBoundingClientRect();
   const asp = b.height ? b.width / b.height : 1;
   cam.left = -r * asp; cam.right = r * asp;
@@ -161,8 +163,9 @@ function draw() {
   cam.updateProjectionMatrix();
 
   // --- continuous evolution: from the opening axo, turning as you go down ---
-  pivot.parent.rotation.y = AXO_Y + p * Math.PI * 1.6;
-  pivot.parent.rotation.x = lerp(AXO_X, 0.12, ramp(p, 0.08, 0.75));
+  const q = u / 3;
+  pivot.parent.rotation.y = AXO_Y + q * Math.PI * 1.6;
+  pivot.parent.rotation.x = lerp(AXO_X, 0.12, ramp(q, 0.08, 0.75));
 
   renderer.render(scene, cam);
 }
