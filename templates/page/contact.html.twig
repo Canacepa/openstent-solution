@@ -6,9 +6,31 @@
     <div class="sheet page-top">
         <section>
             <p class="kicker">Contact</p>
-            <h1 class="h2">Nous trouver.</h1>
+            <h1 class="h2">Écrivez-nous.</h1>
+            <p class="lede">Dites-nous qui vous êtes : cela décide de qui vous répond.</p>
+            <form class="form" method="post" action="#">
+                <label>Vous êtes
+                    <select name="profil" required>
+                        <option value="">Choisir…</option>
+                        <option>Patient ou proche</option>
+                        <option>Soignant</option>
+                        <option>Presse</option>
+                        <option>Autre</option>
+                    </select>
+                </label>
+                <label>Email
+                    <input type="email" name="email" required autocomplete="email" placeholder="vous@exemple.fr">
+                </label>
+                <label>Message
+                    <textarea name="message" required rows="5"></textarea>
+                </label>
+                <button type="submit">Envoyer</button>
+            </form>
+            <p class="lorem-note">Formulaire non branché.</p>
+        </section>
+        <section>
+            <p class="kicker">Nous trouver</p>
             <p class="lede">Open Stent Solution<br>BioLab, 41 avenue Paul Claudel<br>80000 Amiens</p>
-            <p class="lede">Pour nous écrire, utilisez le formulaire en bas de page.</p>
         </section>
     </div>
 {% endblock %}
