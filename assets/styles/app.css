@@ -511,7 +511,7 @@ main{position:relative;z-index:10}
 .checklist li{display:grid;grid-template-columns:1fr 34px;gap:14px;padding:clamp(5px,1vh,10px) 0;border-top:1px solid rgba(223,229,235,.12)}
 .checklist b{font-weight:600;letter-spacing:-.015em;font-size:16.5px}
 .checklist p{margin-top:2px;font-size:clamp(13px,1.75vh,14.5px);line-height:1.4;opacity:.78;max-width:62ch}
-.checklist .todo b{opacity:.65}
+.checklist .todo b{opacity:1}   /* upcoming steps are white like the others */
 
 /* ---------- team page: the intro as a mini hero ---------- */
 .more-row{margin-top:clamp(18px,2vw,26px)}
