@@ -35,4 +35,9 @@
                 feuillets travaillent au centre&nbsp;: la valve se referme de nouveau.</p>
         </div></div>
     </div>
+    <nav class="vnav" aria-label="Étapes de la solution">
+        {% for label in ['La solution', 'Feuillets', "Bras d'ancrage", 'Collerette', 'Assemblé'] %}
+            <button type="button" aria-label="{{ label }}"><span>{{ label }}</span></button>
+        {% endfor %}
+    </nav>
 </section>

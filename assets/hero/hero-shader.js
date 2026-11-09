@@ -180,45 +180,11 @@ void main(){
   }, { passive: true });
   addEventListener('pointerleave', function () { moving = 0; });
 
-  var sp = document.getElementById('sp'), wd = document.getElementById('wd'),
-      cell = document.getElementById('cell'), gain = document.getElementById('gain'),
-      off = document.getElementById('off'), clr = document.getElementById('clr'),
-      bpm = document.getElementById('bpm'), swell = document.getElementById('swell'),
-      spread = document.getElementById('spread'),
-      pause = document.getElementById('pause'), fpsOut = document.getElementById('fps');
+  // the settings that used to come from the hidden dev panel
+  var P = { sp: 0.30, bpm: 18, swell: 1.20, spread: 2.0, wd: 0.46, cell: 1, gain: 0.80, off: 10, clr: 0.00 };
   var running = true, onScreen = true;
-  pause.addEventListener('click', function () {
-    running = !running;
-    pause.textContent = running ? 'Pause' : 'Play';
-    if (running) { last = 0; requestAnimationFrame(frame); }
-  });
 
-  // every control writes its own value back out, so the settings can be read off
-  // the screen and handed back as final numbers
-  var CTRL = [['sp',2],['bpm',0],['swell',2],['spread',1],['wd',2],['cell',0],['gain',2],['off',0],['clr',2]];
-  var summary = document.getElementById('summary');
-  function readout() {
-    var parts = CTRL.map(function (c) {
-      var el = document.getElementById(c[0]);
-      var txt = parseFloat(el.value).toFixed(c[1]);
-      document.getElementById(c[0] + '_v').textContent = txt;
-      return c[0] + '=' + txt;
-    });
-    summary.textContent = parts.join('  ') +
-      '  beige=' + BEIGE_HEX + '  pale=' + PALE_HEX + '  deep=' + DEEP_HEX + '  lens=' + LENS_HEX;
-  }
-  CTRL.forEach(function (c) {
-    document.getElementById(c[0]).addEventListener('input', readout);
-  });
-  document.getElementById('copy').addEventListener('click', function (e) {
-    var ok = function () { e.target.textContent = 'Copied'; 
-      setTimeout(function () { e.target.textContent = 'Copy values'; }, 1400); };
-    if (navigator.clipboard) navigator.clipboard.writeText(summary.textContent).then(ok, ok);
-    else { getSelection().selectAllChildren(summary); ok(); }
-  });
-  readout();
-
-  var t = 0, beat = 0, last = 0, frames = 0, acc = 0;
+  var t = 0, beat = 0, last = 0;
   function frame(ts) {
     if (running) requestAnimationFrame(frame);
     if (!last) last = ts;
@@ -226,7 +192,7 @@ void main(){
     last = ts;
     if (!onScreen) return;                    // stop drawing once the hero is scrolled past
     t += dt;
-    if (!reduced) beat += dt * parseFloat(bpm.value) / 60;
+    if (!reduced) beat += dt * P.bpm / 60;
     cv.beat = beat;                           // heart.js swells on the same beat
     if (stage.style.opacity === '0.000') return;   // stepped aside for scene 1
 
@@ -236,9 +202,9 @@ void main(){
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.uniform1f(U.u_time, t);
     gl.uniform2f(U.u_resolution, W, H);
-    gl.uniform1f(U.u_width, parseFloat(wd.value));
+    gl.uniform1f(U.u_width, P.wd);
     gl.uniform1f(U.u_mul, 1.0);
-    gl.uniform1f(U.u_speed, reduced ? 0 : parseFloat(sp.value));
+    gl.uniform1f(U.u_speed, reduced ? 0 : P.sp);
     gl.uniform3fv(U.u_beige, BEIGE);
     gl.uniform3fv(U.u_pale, PALE);
     gl.uniform3fv(U.u_deep, DEEP);
@@ -246,18 +212,16 @@ void main(){
     gl.uniform2f(U.u_mouse, mx, my);
     gl.uniform1f(U.u_lensR, (W >= 1200 ? 100 : 70) * dpr);
     gl.uniform1f(U.u_lensAmp, amp * 0.9);
-    gl.uniform1f(U.u_cell, parseFloat(cell.value) * dpr);
-    gl.uniform1f(U.u_gain, parseFloat(gain.value));
-    gl.uniform1f(U.u_offset, parseFloat(off.value) * dpr);
-    gl.uniform1f(U.u_clear, W < 900 * dpr ? 0.0 : parseFloat(clr.value));
+    gl.uniform1f(U.u_cell, P.cell * dpr);
+    gl.uniform1f(U.u_gain, P.gain);
+    gl.uniform1f(U.u_offset, P.off * dpr);
+    gl.uniform1f(U.u_clear, W < 900 * dpr ? 0.0 : P.clr);
     gl.uniform1f(U.u_beat, beat);
-    gl.uniform1f(U.u_swell, parseFloat(swell.value));
-    gl.uniform1f(U.u_spread, parseFloat(spread.value));
+    gl.uniform1f(U.u_swell, P.swell);
+    gl.uniform1f(U.u_spread, P.spread);
     gl.uniform2f(U.u_valve, W * 2 / 3, H / 2);   // the flow leaves the heart, two thirds across
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-    frames++; acc += dt;
-    if (acc >= 0.5) { fpsOut.textContent = Math.round(frames / acc); frames = 0; acc = 0; }
   }
 
   size();

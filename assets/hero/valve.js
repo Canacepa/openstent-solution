@@ -15,9 +15,9 @@ const story = document.querySelector('.story');
 if (cv && story) {
 
 const BODY = 0xDFE5EB, RED = 0xEF233C, GROUND = 0x111217, GHOST = 0x3A3E48;
-// top to bottom: the flange sits on the atrial side, the arms reach under the native
-// leaflets. Gap between parts along the axis, in mm (the GLB's unit)
-const STACK = { flange: 1, leaflets: 0, arms: -1 };
+// top to bottom, in the order of the cards: 01 leaflets, 02 arms, 03 flange.
+// Gap between parts along the axis, in mm (the GLB's unit)
+const STACK = { leaflets: 1, arms: 0, flange: -1 };
 const GAP = 50;
 // which card lights which part (the first card is the overview, the last the assembly)
 const CARD = { leaflets: 1, arms: 2, flange: 3 };
