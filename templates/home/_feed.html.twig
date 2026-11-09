@@ -1,17 +1,15 @@
+{% if news is not empty %}
 <section id="feed">
     <p class="kicker">Actualités</p>
     <h2>Le projet avance.</h2>
     <ul class="feed">
-        {% for n in [
-            ['2024-03', 'Mars 2024', 'Campagne de financement participatif', 'Lancement du tour pré-série A sur Capital Cell.'],
-            ['2023', '2023', 'Lauréate Hauts-de-France', 'Open Stent Solution est distinguée parmi les projets innovants de la région.'],
-            ['2022-03', 'Mars 2022', 'Parmi les 100 start-up où investir', 'Sélection du magazine Challenges, après un article sur la promesse du remplacement valvulaire transcathéter.']
-        ] %}
+        {% for n in news %}
             <li>
-                <time datetime="{{ n[0] }}">{{ n[1] }}</time>
-                <div><b>{{ n[2] }}</b>
-                    <p>{{ n[3] }}</p></div>
+                <time datetime="{{ n.publishedAt|date('Y-m-d') }}">{{ n.dateLabel }}</time>
+                <div><b>{{ n.title }}</b>
+                    <p>{{ n.summary }}</p></div>
             </li>
         {% endfor %}
     </ul>
 </section>
+{% endif %}

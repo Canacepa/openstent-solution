@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+    <div class="sheet page-top">
+        <section>
+            <p class="kicker">Administration</p>
+            <h1 class="h2">Connexion.</h1>
+
+            {% if error %}
+                <p class="form-error" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+            {% endif %}
+
+            <form class="form" method="post">
+                <label>Email
+                    <input type="email" name="_username" value="{{ last_username }}" required autofocus autocomplete="username">
+                </label>
+                <label>Mot de passe
+                    <input type="password" name="_password" required autocomplete="current-password">
+                </label>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <button type="submit">Se connecter</button>
+            </form>
+        </section>
+    </div>
+{% endblock %}

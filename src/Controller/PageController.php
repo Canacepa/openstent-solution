@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\NewsItemRepository;
+use App\Repository\TeamMemberRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -9,15 +11,15 @@ use Symfony\Component\Routing\Attribute\Route;
 final class PageController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function home(): Response
+    public function home(NewsItemRepository $news): Response
     {
-        return $this->render('page/home.html.twig');
+        return $this->render('page/home.html.twig', ['news' => $news->latest(3)]);
     }
 
     #[Route('/team', name: 'app_team')]
-    public function team(): Response
+    public function team(TeamMemberRepository $team): Response
     {
-        return $this->render('page/team.html.twig');
+        return $this->render('page/team.html.twig', ['members' => $team->ordered()]);
     }
 
     #[Route('/contact', name: 'app_contact')]

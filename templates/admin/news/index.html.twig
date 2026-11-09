@@ -1,0 +1,32 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Actualités — administration{% endblock %}
+
+{% block admin %}
+    <h1 class="h2">Actualités</h1>
+    <p><a class="act" href="{{ path('admin_news_new') }}">Ajouter une actualité</a></p>
+
+    {% if items is empty %}
+        <p class="lede">Aucune actualité pour le moment.</p>
+    {% else %}
+        <table class="admin-table">
+            <thead><tr><th>Date</th><th>Titre</th><th></th></tr></thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.dateLabel }}</td>
+                        <td>{{ item.title }}</td>
+                        <td><div class="admin-actions">
+                            <a href="{{ path('admin_news_edit', {id: item.id}) }}">Modifier</a>
+                            <form method="post" action="{{ path('admin_news_delete', {id: item.id}) }}"
+                                  onsubmit="return confirm('Supprimer cette actualité ?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_news_' ~ item.id) }}">
+                                <button type="submit">Supprimer</button>
+                            </form>
+                        </div></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="sheet page-top">
+        <section>
+            <nav class="admin-nav" aria-label="Administration">
+                <a href="{{ path('admin_news_index') }}">Actualités</a>
+                <a href="{{ path('admin_team_index') }}">Équipe</a>
+                <a href="{{ path('app_logout') }}" class="admin-logout">Se déconnecter</a>
+            </nav>
+
+            {% for message in app.flashes('success') %}
+                <p class="flash" role="status">{{ message }}</p>
+            {% endfor %}
+
+            {% block admin %}{% endblock %}
+        </section>
+    </div>
+{% endblock %}

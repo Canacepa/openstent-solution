@@ -1,0 +1,34 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Équipe — administration{% endblock %}
+
+{% block admin %}
+    <h1 class="h2">Équipe</h1>
+    <p><a class="act" href="{{ path('admin_team_new') }}">Ajouter un membre</a></p>
+
+    {% if members is empty %}
+        <p class="lede">Aucun membre pour le moment.</p>
+    {% else %}
+        <table class="admin-table">
+            <thead><tr><th>Ordre</th><th>Photo</th><th>Nom</th><th>Poste</th><th></th></tr></thead>
+            <tbody>
+                {% for m in members %}
+                    <tr>
+                        <td>{{ m.position }}</td>
+                        <td>{% if m.photo %}<img class="admin-thumb" src="{{ asset('uploads/team/' ~ m.photo) }}" alt="" width="40" height="50">{% endif %}</td>
+                        <td>{{ m.name }}</td>
+                        <td>{{ m.role }}</td>
+                        <td><div class="admin-actions">
+                            <a href="{{ path('admin_team_edit', {id: m.id}) }}">Modifier</a>
+                            <form method="post" action="{{ path('admin_team_delete', {id: m.id}) }}"
+                                  onsubmit="return confirm('Supprimer ce membre ?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_team_' ~ m.id) }}">
+                                <button type="submit">Supprimer</button>
+                            </form>
+                        </div></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
