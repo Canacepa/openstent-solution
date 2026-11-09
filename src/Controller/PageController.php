@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\TeamMember;
 use App\Repository\ChecklistStepRepository;
 use App\Repository\NewsItemRepository;
 use App\Repository\TeamMemberRepository;
@@ -15,12 +14,8 @@ final class PageController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function home(TeamMemberRepository $team, ChecklistStepRepository $steps): Response
     {
-        $members = $team->ordered();
-        // a profile counts as complete once it has a photo, a role and a biography
-        $complete = array_filter($members, static fn (TeamMember $m): bool => $m->getPhoto() && $m->getRole() && trim($m->getBio()));
-
         return $this->render('page/home.html.twig', [
-            'team' => ['total' => \count($members), 'complete' => \count($complete)],
+            'members' => $team->ordered(),
             'steps' => $steps->ordered(),
         ]);
     }

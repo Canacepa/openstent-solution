@@ -13,6 +13,7 @@ if (section && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'Inter
   bar.style.setProperty('--w', '0%');
 
   function play() {
+    section.classList.add('in');
     items.forEach((li, i) => setTimeout(() => li.classList.add('shown'), i * STEP));
 
     const done = items.filter(li => li.classList.contains('done'));

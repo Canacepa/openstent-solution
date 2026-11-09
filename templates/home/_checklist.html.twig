@@ -1,27 +1,32 @@
-{# `steps` comes from the database (edited in /admin/checklist); the team item is computed. #}
-{% set team_done = team.total > 0 and team.complete == team.total %}
-{% set done = steps|filter(s => s.status == 'done')|length + (team_done ? 1 : 0) %}
-{% set total = steps|length + 1 %}
+{# `steps` comes from the database (edited in /admin/checklist), `members` is the team. #}
+{% set done = steps|filter(s => s.status == 'done')|length %}
+{% set total = steps|length %}
 <section id="checklist">
-    <p class="kicker">Où en est le projet</p>
-    <h2>Une étape après l'autre.</h2>
-    <p class="lede">{{ done }} étape{{ done > 1 ? 's' : '' }} sur {{ total }} terminée{{ done > 1 ? 's' : '' }}.</p>
-    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ done }}">
-        <span style="--w: {{ (done / total * 100)|round }}%"></span>
-    </div>
-    <ol class="checklist">
-        <li class="{{ team_done ? 'done' : 'current' }}" style="--i: 0">
-            <span class="mark" aria-hidden="true"></span>
-            <div>
-                <b>Création de l'équipe</b>
-                <p><a class="more" href="{{ path('app_team') }}">Voir l'équipe <span aria-hidden="true">&rsaquo;</span></a></p>
+    <div class="checklist-main">
+        <p class="kicker">Où en est le projet</p>
+        {% if total %}
+            <p class="lede">{{ done }} étape{{ done > 1 ? 's' : '' }} sur {{ total }} terminée{{ done > 1 ? 's' : '' }}.</p>
+            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ done }}">
+                <span style="--w: {{ (done / total * 100)|round }}%"></span>
             </div>
-        </li>
-        {% for s in steps %}
-            <li class="{{ s.status }}" style="--i: {{ loop.index }}">
-                <span class="mark" aria-hidden="true"></span>
-                <div><b>{{ s.title }}</b><p>{{ s.text }}</p></div>
-            </li>
-        {% endfor %}
-    </ol>
+            <ol class="checklist">
+                {% for s in steps %}
+                    <li class="{{ s.status }}" style="--i: {{ loop.index0 }}">
+                        <span class="mark" aria-hidden="true"></span>
+                        <div><b>{{ s.title }}</b><p>{{ s.text }}</p></div>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% endif %}
+    </div>
+
+    <aside class="encart" aria-label="L'équipe">
+        <p class="kicker">L'équipe</p>
+        <h3>{{ members|length }} personnes, une seule valve.</h3>
+        <img class="encart-photo" src="{{ asset('images/team.webp') }}" alt="L'équipe d'Open Stent Solution réunie."
+             width="3840" height="2554" loading="lazy" decoding="async">
+        <p>Un chirurgien cardiaque inventeur, des ingénieurs du dispositif médical et des artisans
+            venus du textile et de la maroquinerie, réunis à Amiens.</p>
+        <a class="act act--ghost" href="{{ path('app_team') }}">Voir l'équipe</a>
+    </aside>
 </section>
