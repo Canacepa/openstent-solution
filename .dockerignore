@@ -1,0 +1,18 @@
+# nothing from the development machine goes into the image: no secrets, no caches, no uploads
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+var
+vendor
+node_modules
+assets/vendor
+public/assets
+public/uploads
+tests
+compose*.yaml
+Dockerfile
+.dockerignore
+.claude
+*.md

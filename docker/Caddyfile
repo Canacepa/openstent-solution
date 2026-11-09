@@ -1,0 +1,22 @@
+{
+	frankenphp
+}
+
+# SERVER_NAME comes from the environment: a domain name gets an automatic HTTPS certificate,
+# ":80" serves plain HTTP (internal tests).
+{$SERVER_NAME:localhost} {
+	root * /app/public
+	encode zstd br gzip
+
+	# photos are uploaded to public/uploads: never run anything from there
+	@uploaded_scripts path_regexp uploadscripts ^/uploads/.*\.(php|phtml|phar)(/|$)
+	respond @uploaded_scripts 403
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	php_server
+}

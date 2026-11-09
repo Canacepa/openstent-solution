@@ -23,3 +23,5 @@
 ###< symfony/asset-mapper ###
 
 /public/uploads/
+
+/.env.preprod

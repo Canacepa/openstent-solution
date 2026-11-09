@@ -1,0 +1,56 @@
+# Pre-production stack: FrankenPHP (Caddy + PHP) and MySQL, built from the Dockerfile.
+#
+#   cp .env.preprod.example .env.preprod        # then fill in the secrets
+#   docker compose -f compose.yaml -f compose.preprod.yaml --env-file .env.preprod up -d --build
+#   docker compose -f compose.yaml -f compose.preprod.yaml --env-file .env.preprod exec app php bin/console app:create-admin you@example.com
+#   scripts/preprod-migrate-data.sh              # copies the development content and photos
+#
+# The schema is created by the Doctrine migrations, which the app container runs when it starts.
+services:
+  database:
+    restart: unless-stopped
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD in .env.preprod}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD in .env.preprod}
+
+  app:
+    build:
+      context: .
+      target: prod
+    image: openstent-app:preprod
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: "0"
+      APP_SECRET: ${APP_SECRET:?set APP_SECRET in .env.preprod}
+      # the password goes into a URL: keep it to letters and digits (or URL-encode it)
+      DATABASE_URL: mysql://${MYSQL_USER:-app}:${MYSQL_PASSWORD:?set MYSQL_PASSWORD in .env.preprod}@database:3306/${MYSQL_DATABASE:-openstent}?serverVersion=${MYSQL_VERSION:-8.4}&charset=utf8mb4
+      DEFAULT_URI: ${DEFAULT_URI:-http://localhost}
+      MAILER_DSN: ${MAILER_DSN:-null://null}
+      MESSENGER_TRANSPORT_DSN: doctrine://default?auto_setup=0
+      SERVER_NAME: ${SERVER_NAME:-:80}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+      - "${HTTPS_PORT:-443}:443/udp"
+    volumes:
+      # photos uploaded from the admin
+      - uploads:/app/public/uploads
+      # Caddy's certificates and state
+      - caddy_data:/data
+      - caddy_config:/config
+    healthcheck:
+      # Caddy's admin endpoint answers once the server is up
+      test: ["CMD-SHELL", "php -r 'exit(@file_get_contents(\"http://localhost:2019/config/\") ? 0 : 1);'"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  uploads:
+  caddy_data:
+  caddy_config:
