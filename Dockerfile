@@ -26,7 +26,8 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY docker/php.ini "$PHP_INI_DIR/conf.d/zz-app.ini"
 COPY docker/Caddyfile /etc/caddy/Caddyfile
 COPY docker/entrypoint.sh /usr/local/bin/docker-entrypoint
-RUN chmod +x /usr/local/bin/docker-entrypoint
+# strip any Windows line endings: a CRLF script cannot run in the container
+RUN sed -i 's/$//' /usr/local/bin/docker-entrypoint && chmod +x /usr/local/bin/docker-entrypoint
 
 COPY . .
 COPY --from=vendor /app/vendor ./vendor
