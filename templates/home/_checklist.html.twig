@@ -23,8 +23,6 @@
             <span class="mark" aria-hidden="true"></span>
             <div>
                 <b>Création de l'équipe</b>
-                <p>{{ team.complete }} profil{{ team.complete > 1 ? 's' : '' }} complet{{ team.complete > 1 ? 's' : '' }} sur {{ team.total }} (photo, poste et biographie).</p>
-                <div class="progress progress--small"><span style="--w: {{ team.total ? (team.complete / team.total * 100)|round : 0 }}%"></span></div>
                 <p><a class="more" href="{{ path('app_team') }}">Voir l'équipe <span aria-hidden="true">&rsaquo;</span></a></p>
             </div>
         </li>

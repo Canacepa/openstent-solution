@@ -506,7 +506,6 @@ main{position:relative;z-index:10}
 /* ---------- checklist ---------- */
 .progress{height:8px;margin-top:clamp(18px,2vw,26px);border-radius:999px;background:var(--surface);overflow:hidden}
 .progress span{display:block;width:var(--w,0%);height:100%;border-radius:inherit;background:var(--accent)}
-.progress--small{height:5px;margin-top:10px;max-width:280px}
 .checklist{list-style:none;margin:clamp(10px,2vh,22px) 0 0;padding:0}
 .checklist li{display:grid;grid-template-columns:1fr 34px;gap:14px;padding:clamp(5px,1vh,10px) 0;border-top:1px solid rgba(223,229,235,.12)}
 .checklist b{font-weight:600;letter-spacing:-.015em;font-size:16.5px}
@@ -544,8 +543,6 @@ main{position:relative;z-index:10}
    ones in turn (the bar follows), then .pulse on the current one. Without the script the
    final state shows as is. */
 #checklist.anim .progress span{width:var(--w,0%);transition:width .5s cubic-bezier(.22,.61,.36,1)}
-#checklist.anim .progress--small span{width:0}
-#checklist.anim .shown .progress--small span{width:var(--w,0%);transition:width .9s cubic-bezier(.22,.61,.36,1) .2s}
 #checklist.anim .checklist li{opacity:0;transform:translateY(12px);
   transition:opacity .4s ease,transform .4s cubic-bezier(.22,.61,.36,1)}
 #checklist.anim .checklist li.shown{opacity:1;transform:none}
