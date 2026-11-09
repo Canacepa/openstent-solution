@@ -513,7 +513,6 @@ main{position:relative;z-index:10}
 .checklist .todo b{opacity:.65}
 
 /* ---------- team page: the intro as a mini hero ---------- */
-.team--hero{margin-bottom:clamp(32px,4vw,56px)}
 .more-row{margin-top:clamp(18px,2vw,26px)}
 
 /* ---------- vertical nav of the solution ---------- */
@@ -573,3 +572,17 @@ main{position:relative;z-index:10}
 /* the toggle sits on the right of its step */
 .checklist li > div{grid-column:1;grid-row:1}
 .checklist li > .mark{grid-column:2;grid-row:1;align-self:start}
+
+/* ---------- page hero (team): a small banner under the bar ---------- */
+.page-hero{position:relative;display:grid;align-items:end;overflow:hidden;
+  min-height:clamp(420px,68svh,640px);padding-top:calc(64px + var(--bar));background:var(--ground)}
+.page-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 62%;
+  filter:grayscale(1) brightness(.65)}
+.page-hero::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.82) 0%,rgba(0,0,0,.45) 55%,rgba(0,0,0,0) 100%),
+             linear-gradient(0deg,var(--ground) 0%,rgba(0,0,0,0) 38%)}
+.page-hero-in{position:relative;z-index:1;width:100%;max-width:var(--page);margin-inline:auto;
+  padding:clamp(28px,5vw,56px) var(--gut) clamp(28px,4vw,56px)}
+.page-hero h1{font-size:clamp(2.6rem,7vw,5.5rem);letter-spacing:-.045em;line-height:.95}
+.page-hero h1 strong{font-weight:700}
+.page-hero .lede{margin-top:clamp(14px,2vw,22px);max-width:46ch}

@@ -3,19 +3,17 @@
 {% block title %}Équipe{% endblock %}
 
 {% block body %}
-    <div class="sheet page-top">
+    <header class="page-hero">
+        <img src="{{ asset('images/equipe-portrait.webp') }}" alt=""
+             width="1400" height="932" decoding="async">
+        <div class="page-hero-in">
+            <h1>Notre <strong>équipe</strong></h1>
+            <p class="lede">Un chirurgien cardiaque inventeur, des ingénieurs du dispositif médical et des
+                artisans venus du textile et de la maroquinerie, réunis à Amiens autour d'une seule valve.</p>
+        </div>
+    </header>
+    <div class="sheet">
         <section>
-            <h1 class="h2">Notre <strong>équipe</strong></h1>
-            <div class="team team--hero">
-                <figure>
-                    <img src="{{ asset('images/equipe-portrait.webp') }}" alt="Deux mains tenant un modèle anatomique de cœur."
-                         width="1400" height="932" decoding="async">
-                </figure>
-                <div>
-                    <p>Un chirurgien cardiaque inventeur, des ingénieurs du dispositif médical et des
-                        artisans venus du textile et de la maroquinerie, réunis à Amiens autour d'une seule valve.</p>
-                </div>
-            </div>
             <div class="crew">
                 {% for m in members %}
                     <article class="member" data-controller="modal">
