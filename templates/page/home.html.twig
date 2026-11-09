@@ -7,13 +7,17 @@
 {% block body %}
     <div class="story">
         <div class="story-stage" aria-hidden="true">
-            <canvas id="valve" data-glb="{{ asset('models/valve-parts.glb') }}"></canvas>
+            <div class="explode">
+                <canvas id="valve" data-glb="{{ asset('models/valve-parts.glb') }}"></canvas>
+                <p class="note" data-part="leaflets"><i></i><b>01</b> Feuillets</p>
+                <p class="note" data-part="arms"><i></i><b>02</b> Bras d'ancrage</p>
+                <p class="note" data-part="flange"><i></i><b>03</b> Collerette</p>
+            </div>
         </div>
         {% include 'home/_hero.html.twig' %}
-        {% include 'home/_pathology.html.twig' %}
         {% include 'home/_solution.html.twig' %}
     </div>
-    <div class="sheet sheet--after-story">
+    <div class="sheet">
         {% for s in ['team', 'feed', 'contact'] %}
             {% include 'home/_' ~ s ~ '.html.twig' %}
         {% endfor %}

@@ -15,6 +15,8 @@
 
    Simplex noise is Ashima's webgl-noise (MIT). */
 
+import { FLUID, TONES, rgb } from './fluid-glsl.js';
+
 (function () {
   var cv = document.getElementById('gl');
   var gl = cv && cv.getContext('webgl2', { alpha: true, antialias: true, premultipliedAlpha: false });
@@ -52,45 +54,7 @@ uniform vec2  u_valve;     // the 3D valve's centre, device pixels, y from the b
 
 out vec4 fragColor;
 
-/* --- Ashima 2D simplex noise (MIT) --- */
-vec3 mod289(vec3 x){ return x - floor(x * (1.0/289.0)) * 289.0; }
-vec2 mod289(vec2 x){ return x - floor(x * (1.0/289.0)) * 289.0; }
-vec3 permute(vec3 x){ return mod289(((x*34.0)+1.0)*x); }
-float snoise(vec2 v){
-  const vec4 C = vec4(0.211324865405187, 0.366025403784439,
-                     -0.577350269189626, 0.024390243902439);
-  vec2 i  = floor(v + dot(v, C.yy));
-  vec2 x0 = v - i + dot(i, C.xx);
-  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-  vec4 x12 = x0.xyxy + C.xxzz;
-  x12.xy -= i1;
-  i = mod289(i);
-  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
-  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-  m = m*m; m = m*m;
-  vec3 x = 2.0 * fract(p * C.www) - 1.0;
-  vec3 h = abs(x) - 0.5;
-  vec3 ox = floor(x + 0.5);
-  vec3 a0 = x - ox;
-  m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
-  vec3 g;
-  g.x  = a0.x * x0.x + h.x * x0.y;
-  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-  return 130.0 * dot(m, g);
-}
-
-/* --- scalar plasma: iterative sin/cos domain warp, 0..1 --- */
-float plasmaField(vec2 p0){
-  float t = u_time * u_speed;
-  vec2 p = p0;
-  for (int i = 1; i <= 5; i++) {
-    float fi = float(i);
-    p.x += u_width / fi * sin(fi * u_mul * p.y + t);
-    p.y += u_width / fi * cos(fi * u_mul * p.x + t);
-  }
-  return sin(p.x * 3.0) * cos(p.y * 3.0) * 0.5 + 0.5;
-}
-
+${FLUID}
 void main(){
   vec2 pix = gl_FragCoord.xy;
   vec2 blockPix = floor(pix / u_cell) * u_cell;
@@ -147,19 +111,12 @@ void main(){
   float halo = lens * (0.3 + 0.7 * wtex);
   dens = clamp(dens + halo * 0.85, 0.0, 1.0);
 
-  // five strata, beige at the rim, then pale to deep at the core (on cream the dense
-  // end must be the DARK one). The steps are soft and the raw density is blended
-  // back in, so each tone carries its own gradient instead of a hard flat
-  float lv = smoothstep(0.26, 0.34, dens) + smoothstep(0.44, 0.54, dens)
-           + smoothstep(0.62, 0.72, dens) + smoothstep(0.80, 0.90, dens);
-  float k  = mix(lv / 4.0, dens, 0.3);
-  vec3 col = k < 0.25 ? mix(u_beige, u_pale, k * 4.0)
-                      : mix(u_pale, u_deep, (k - 0.25) / 0.75);
+  vec3 col = fluidTone(dens);
   col = mix(col, u_lensCol, smoothstep(0.25, 0.5, halo));
 
   // the beige rim dissolves into transparency across its whole stratum, so the band
   // has no outline: it simply thins out into the ground
-  fragColor = vec4(col, smoothstep(0.06, 0.30, dens));
+  fragColor = vec4(col, smoothstep(0.34, 0.46, dens));   // only the bright strata are drawn: no dark-red haze over the ground
 }`;
 
   function compile(type, src) {
@@ -196,12 +153,8 @@ void main(){
     U[n] = gl.getUniformLocation(prog, n);
   });
 
-  function rgb(hex) {
-    var v = parseInt(hex.slice(1), 16);
-    return [(v >> 16 & 255) / 255, (v >> 8 & 255) / 255, (v & 255) / 255];
-  }
   // on the dark ground the dense core is the BRIGHT end: rim near the ground, core blood red
-  var BEIGE_HEX = '#2E0C0E', PALE_HEX = '#7B1414', DEEP_HEX = '#B3222A', LENS_HEX = '#D8453C';
+  var BEIGE_HEX = TONES.beige, PALE_HEX = TONES.pale, DEEP_HEX = TONES.deep, LENS_HEX = TONES.lens;
   var BEIGE = rgb(BEIGE_HEX), PALE = rgb(PALE_HEX), DEEP = rgb(DEEP_HEX), LENS = rgb(LENS_HEX);
 
   var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -363,9 +316,8 @@ void main(){
     for (var i = 0; i < aside.length; i++) aside[i].style.opacity = away;
     // the card lands with the zoom and leaves before the hero fades, so it never
     // crosses the next card
-    hero.style.setProperty('--scene', (smooth((s - 0.35) / 0.4) * (1 - smooth((s - 1.0) / 0.3))).toFixed(3));
-    hero.style.setProperty('--ground', smooth((s - 0.4) / 0.5).toFixed(3));   // black -> card ground with the zoom
-    var f = smooth((s - 1.0) / 0.4);   // the heart is gone by the second card
+    hero.style.setProperty('--scene', (smooth((s - 0.7) / 0.3) * (1 - smooth((s - 1.05) / 0.25))).toFixed(3));
+    var f = smooth((s - 1.2) / 0.7);
     hero.style.opacity = (1 - f).toFixed(3);
     hero.style.visibility = f >= 1 ? 'hidden' : '';
   }

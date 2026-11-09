@@ -3,11 +3,21 @@
         <h1 class="word"><span>openstent</span></h1>
         <div id="stage" aria-hidden="true"><canvas id="gl"></canvas></div>
         <canvas id="heart" aria-hidden="true"
-                data-glb="{{ asset('models/heart.glb') }}"
-                data-section="{{ asset('models/heart-anatomy.glb') }}"></canvas>
+                data-glb="{{ asset('models/coeur_interieur_complet.glb') }}"
+                data-section="{{ asset('models/beating-heart.glb') }}"></canvas>
         <p class="hook">Le remplacement valvulaire sans chirurgie ouverte, pour les patients que rien n'atteint aujourd'hui.</p>
-        <p class="tag" aria-hidden="true">Valve mitrale</p>
-        <a class="cue" id="cue" href="#pathology">
+        {# scene 1 — the heart in section, on its failing mitral valve #}
+        <div class="scene">
+            <div class="card">
+                <p class="kicker">Insuffisance mitrale</p>
+                <h3>La valve ne se ferme plus&nbsp;: le sang repart en arrière.</h3>
+                <p>Quand ses feuillets ne se rejoignent plus, une partie du sang reflue vers
+                    l'oreillette à chaque contraction, au lieu de partir vers le corps. Le
+                    cœur doit travailler davantage pour un débit moindre.</p>
+            </div>
+        </div>
+        <p class="tag" aria-hidden="true">Fuite mitrale</p>
+        <a class="cue" id="cue" href="#solution">
             Scroll
             <span class="rail"><i></i></span>
         </a>

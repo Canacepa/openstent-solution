@@ -12,12 +12,13 @@ const DUR = 3000;
 if (story && sheet) {
 
 const top = el => el.getBoundingClientRect().top + scrollY;
-// the hero, each card centred on screen (the first one is scene 1, the heart zoomed)
+// the hero, scene 1 (one screen into the hero's run), each card centred on screen
 // (where valve.js lights it), the page after
+const run = story.querySelector('.hero-run');
 function stops() {
   const slots = [...story.querySelectorAll('.slot')]
     .map(s => top(s) + s.offsetHeight / 2 - innerHeight / 2);
-  return [0, ...slots, top(sheet)];
+  return [0, ...(run ? [top(run) + innerHeight] : []), ...slots, top(sheet)];
 }
 
 let busy = false;
