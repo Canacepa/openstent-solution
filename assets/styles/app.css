@@ -243,7 +243,7 @@ main{position:relative;z-index:10}
 
 .crew{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
   gap:clamp(16px,2.2vw,28px);margin-top:clamp(28px,3.4vw,46px)}
-.crew div{background:var(--surface);border-radius:8px;padding:clamp(18px,2vw,24px)}
+.crew > div{background:var(--surface);border-radius:8px;padding:clamp(18px,2vw,24px)}
 .crew b{display:block;font-weight:600;letter-spacing:-.015em}
 .crew span{display:block;margin-top:5px;font-size:14.5px;color:var(--text)}
 
@@ -431,28 +431,29 @@ main{position:relative;z-index:10}
 .form input[type=file]{padding:8px 12px}
 
 /* ---------- team ---------- */
-.crew{grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2.2vw,28px);align-items:stretch}
+.crew{grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,2.6vw,36px);align-items:stretch}
 @media(max-width:620px){.crew{grid-template-columns:1fr}}
-.crew div{padding:0;background:none;border-radius:0}   /* reset the prototype's plain tiles */
 .member{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);align-items:center;
   background:var(--surface);border-radius:8px;overflow:hidden}
 .member > img{display:block;width:100%;height:100%;aspect-ratio:4/5;object-fit:cover;object-position:top}
-.member-text{padding:clamp(14px,1.8vw,24px)}
-.sheet .member h2{font-size:1.15rem;letter-spacing:-.015em;line-height:1.25;max-width:none}
-.role{margin-top:5px;font-size:14.5px;opacity:.72}
-.member .more{margin-top:14px;border:0;background:none;padding:0;font:inherit;cursor:pointer}
+.member-text{padding:clamp(22px,2.8vw,40px) clamp(20px,2.4vw,36px)}
+.sheet .member h2{font-size:1.25rem;letter-spacing:-.015em;line-height:1.25;max-width:none;color:var(--accent)}
+.role{margin-top:8px;font-size:14.5px;line-height:1.45;opacity:.72}
+.member .more{margin-top:clamp(16px,2vw,24px);border:0;background:none;padding:0;font:inherit;cursor:pointer}
 .member-nophoto{display:block;min-height:160px;background:var(--ground)}
 
 /* the biography opens in a native modal <dialog> */
-.modal{width:min(720px,calc(100vw - 32px));max-height:calc(100vh - 48px);padding:0;border:0;
+.modal{width:min(980px,calc(100vw - 48px));max-height:calc(100vh - 56px);padding:0;border:0;
   border-radius:12px;background:var(--surface);color:var(--text);overflow:auto}
 .modal::backdrop{background:rgba(0,0,0,.7)}
-.modal[open]{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr)}
+.modal[open]{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr)}
 .modal img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
-.modal-body{padding:clamp(20px,3vw,36px)}
-.modal-body h3{font-size:1.4rem;letter-spacing:-.02em;line-height:1.15}
-.modal-body p:not(.role){margin-top:14px;font-size:15.5px;line-height:1.6}
-.modal-close{position:absolute;top:10px;right:12px;width:36px;height:36px;border:0;border-radius:50%;
+.modal-body{padding:clamp(32px,4.8vw,68px) clamp(28px,4.4vw,64px)}
+.modal-body h3{font-size:clamp(1.6rem,2.4vw,2.1rem);letter-spacing:-.025em;line-height:1.1;color:var(--accent)}
+.modal-body .role{margin-top:12px;font-size:15px}
+.modal-body p:not(.role){margin-top:clamp(16px,1.8vw,22px);font-size:16.5px;line-height:1.75;max-width:60ch}
+.modal-body p:not(.role) + p:not(.role){margin-top:1.3em}
+.modal-close{position:absolute;top:16px;right:18px;width:36px;height:36px;border:0;border-radius:50%;
   background:var(--ground);color:var(--text);font-size:24px;line-height:1;cursor:pointer}
 @media(max-width:620px){.modal[open]{grid-template-columns:1fr}.modal img{max-height:260px}}
 
@@ -586,3 +587,8 @@ main{position:relative;z-index:10}
 .page-hero h1{font-size:clamp(2.6rem,7vw,5.5rem);letter-spacing:-.045em;line-height:.95}
 .page-hero h1 strong{font-weight:700}
 .page-hero .lede{margin-top:clamp(14px,2vw,22px);max-width:46ch}
+
+/* news: red titles, and the link to the archives sits on the right in red */
+.feed b{color:var(--accent)}
+.more-row{text-align:right}
+.more-row .more{color:var(--accent)}
