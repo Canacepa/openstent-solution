@@ -1,13 +1,4 @@
-{# status: done | current | todo. The project steps are written here, the last item is computed. #}
-{% set steps = [
-    {status: 'done', title: 'Conception de la Cornelis™ Valve', text: 'Le principe du ruban valvé est défini.'},
-    {status: 'done', title: 'Essais de faisabilité sur banc', text: 'Déploiement, fermeture, étanchéité et tenue en fatigue démontrés.'},
-    {status: 'done', title: "Essais de faisabilité sur l'animal", text: "Positionnement, verrouillage dans l'anneau et hémodynamique prometteurs."},
-    {status: 'current', title: 'Finalisation de la conception', text: 'Les derniers ajustements de la valve sont en cours.'},
-    {status: 'todo', title: 'Études animales complémentaires', text: 'Prévues en 2025.'},
-    {status: 'todo', title: 'Tests réglementaires', text: "Vérification et validation, avant tout essai chez l'humain."},
-    {status: 'todo', title: "Premiers essais chez l'humain", text: "Pas encore : la valve n'est pas approuvée."}
-] %}
+{# `steps` comes from the database (edited in /admin/checklist); the team item is computed. #}
 {% set team_done = team.total > 0 and team.complete == team.total %}
 {% set done = steps|filter(s => s.status == 'done')|length + (team_done ? 1 : 0) %}
 {% set total = steps|length + 1 %}

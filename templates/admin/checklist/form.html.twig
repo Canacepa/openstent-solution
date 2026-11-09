@@ -1,0 +1,12 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}{{ title }} — administration{% endblock %}
+
+{% block admin %}
+    <h1 class="h2">{{ title }}</h1>
+    {{ form_start(form, {attr: {class: 'form'}}) }}
+        {{ form_widget(form) }}
+        <button type="submit">Enregistrer</button>
+    {{ form_end(form) }}
+    <p><a href="{{ path('admin_checklist_index') }}">Annuler</a></p>
+{% endblock %}

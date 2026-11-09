@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\ChecklistStep;
 use App\Entity\NewsItem;
 use App\Entity\TeamMember;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,6 +23,16 @@ final class SeedContentCommand
         ['2024-03-01', 'Mars 2024', 'Campagne de financement participatif', 'Lancement du tour pré-série A sur Capital Cell.'],
         ['2023-01-01', '2023', 'Lauréate Hauts-de-France', 'Open Stent Solution est distinguée parmi les projets innovants de la région.'],
         ['2022-03-01', 'Mars 2022', 'Parmi les 100 start-up où investir', 'Sélection du magazine Challenges, après un article sur la promesse du remplacement valvulaire transcathéter.'],
+    ];
+
+    private const CHECKLIST = [
+        [ChecklistStep::DONE, 'Conception de la Cornelis™ Valve', 'Le principe du ruban valvé est défini.'],
+        [ChecklistStep::DONE, 'Essais de faisabilité sur banc', 'Déploiement, fermeture, étanchéité et tenue en fatigue démontrés.'],
+        [ChecklistStep::DONE, "Essais de faisabilité sur l'animal", "Positionnement, verrouillage dans l'anneau et hémodynamique prometteurs."],
+        [ChecklistStep::CURRENT, 'Finalisation de la conception', 'Les derniers ajustements de la valve sont en cours.'],
+        [ChecklistStep::TODO, 'Études animales complémentaires', 'Prévues en 2025.'],
+        [ChecklistStep::TODO, 'Tests réglementaires', "Vérification et validation, avant tout essai chez l'humain."],
+        [ChecklistStep::TODO, "Premiers essais chez l'humain", "Pas encore : la valve n'est pas approuvée."],
     ];
 
     private const TEAM = [
@@ -57,6 +68,14 @@ final class SeedContentCommand
                     ->setSummary($summary));
             }
             $io->writeln('News imported.');
+        }
+
+        if (0 === $this->em->getRepository(ChecklistStep::class)->count([])) {
+            foreach (self::CHECKLIST as $i => [$status, $title, $text]) {
+                $this->em->persist((new ChecklistStep())
+                    ->setStatus($status)->setTitle($title)->setText($text)->setPosition($i + 1));
+            }
+            $io->writeln('Checklist imported.');
         }
 
         if (0 === $this->em->getRepository(TeamMember::class)->count([])) {

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\TeamMember;
+use App\Repository\ChecklistStepRepository;
 use App\Repository\NewsItemRepository;
 use App\Repository\TeamMemberRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class PageController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function home(TeamMemberRepository $team): Response
+    public function home(TeamMemberRepository $team, ChecklistStepRepository $steps): Response
     {
         $members = $team->ordered();
         // a profile counts as complete once it has a photo, a role and a biography
@@ -20,6 +21,7 @@ final class PageController extends AbstractController
 
         return $this->render('page/home.html.twig', [
             'team' => ['total' => \count($members), 'complete' => \count($complete)],
+            'steps' => $steps->ordered(),
         ]);
     }
 

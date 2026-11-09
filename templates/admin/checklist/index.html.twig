@@ -1,0 +1,34 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Checklist — administration{% endblock %}
+
+{% block admin %}
+    <h1 class="h2">Checklist</h1>
+    <p class="lede">« Création de l'équipe » est toujours affichée en premier et se met à jour toute seule.</p>
+    <p><a class="act" href="{{ path('admin_checklist_new') }}">Ajouter une étape</a></p>
+
+    {% if steps is empty %}
+        <p class="lede">Aucune étape pour le moment.</p>
+    {% else %}
+        <table class="admin-table">
+            <thead><tr><th>Ordre</th><th>Étape</th><th>Statut</th><th></th></tr></thead>
+            <tbody>
+                {% for s in steps %}
+                    <tr>
+                        <td>{{ s.position }}</td>
+                        <td>{{ s.title }}</td>
+                        <td>{{ {done: 'Terminée', current: 'En cours', todo: 'À venir'}[s.status] }}</td>
+                        <td><div class="admin-actions">
+                            <a href="{{ path('admin_checklist_edit', {id: s.id}) }}">Modifier</a>
+                            <form method="post" action="{{ path('admin_checklist_delete', {id: s.id}) }}"
+                                  onsubmit="return confirm('Supprimer cette étape ?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_step_' ~ s.id) }}">
+                                <button type="submit">Supprimer</button>
+                            </form>
+                        </div></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
