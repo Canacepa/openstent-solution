@@ -18,9 +18,8 @@
         {% include 'home/_solution.html.twig' %}
     </div>
     <div class="sheet">
-        {% for s in ['team', 'feed', 'contact'] %}
+        {% for s in ['checklist', 'contact'] %}
             {% include 'home/_' ~ s ~ '.html.twig' %}
         {% endfor %}
     </div>
-    {% include 'home/_hud.html.twig' %}
 {% endblock %}

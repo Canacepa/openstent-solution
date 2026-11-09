@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\TeamMember;
 use App\Repository\NewsItemRepository;
 use App\Repository\TeamMemberRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,9 +12,15 @@ use Symfony\Component\Routing\Attribute\Route;
 final class PageController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function home(NewsItemRepository $news): Response
+    public function home(TeamMemberRepository $team): Response
     {
-        return $this->render('page/home.html.twig', ['news' => $news->latest(3)]);
+        $members = $team->ordered();
+        // a profile counts as complete once it has a photo, a role and a biography
+        $complete = array_filter($members, static fn (TeamMember $m): bool => $m->getPhoto() && $m->getRole() && trim($m->getBio()));
+
+        return $this->render('page/home.html.twig', [
+            'team' => ['total' => \count($members), 'complete' => \count($complete)],
+        ]);
     }
 
     #[Route('/team', name: 'app_team')]
@@ -29,8 +36,14 @@ final class PageController extends AbstractController
     }
 
     #[Route('/about', name: 'app_about')]
-    public function about(): Response
+    public function about(NewsItemRepository $news): Response
     {
-        return $this->render('page/about.html.twig');
+        return $this->render('page/about.html.twig', ['news' => $news->latest(3)]);
+    }
+
+    #[Route('/archives', name: 'app_archives')]
+    public function archives(NewsItemRepository $news): Response
+    {
+        return $this->render('page/archives.html.twig', ['news' => $news->latest()]);
     }
 }

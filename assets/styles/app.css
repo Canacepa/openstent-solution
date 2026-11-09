@@ -361,29 +361,6 @@ main{position:relative;z-index:10}
 .foot-end a{text-decoration:none}
 .foot-end a:hover{text-decoration:underline}
 
-/* ---------- dev HUD ---------- */
-.hud{position:fixed;right:var(--bar);bottom:var(--bar);z-index:30;display:flex;flex-wrap:wrap;
-  width:max-content;max-width:min(92vw,430px);
-  gap:8px 16px;align-items:center;font-size:12.5px;color:var(--text);
-  background:rgba(17,18,23,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
-  box-shadow:inset 0 0 0 1px rgba(223,229,235,.16);border-radius:8px;padding:9px 13px}
-.hud b{color:var(--text);font-weight:600}
-.hud label{display:flex;align-items:center;gap:7px;white-space:nowrap}
-.hud input[type=range]{width:88px;accent-color:var(--accent)}
-.hud .rd{font-variant-numeric:tabular-nums;color:var(--text);font-weight:600;
-  min-width:3.2em;text-align:right}
-.hud .summary{flex-basis:100%;font:400 11.5px/1.55 ui-monospace,Consolas,monospace;
-  color:var(--text);overflow-wrap:anywhere;-webkit-user-select:all;user-select:all;
-  padding-top:2px}
-.hud button{margin-left:2px}
-.hud button{border:0;background:var(--accent);color:var(--on-accent);border-radius:6px;
-  padding:6px 11px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
-.hud summary{cursor:pointer;list-style:none;font-weight:600;color:var(--text);
-  margin-right:4px}
-.hud[open]{max-width:min(92vw,430px)}
-.hud summary::-webkit-details-marker{display:none}
-@media(max-width:860px){.hud{display:none}}
-
 
 /* ---------- page transition: slide-over ----------
    The effect from codrops/interlude's slide-over.ts, rebuilt on the View
@@ -439,9 +416,6 @@ main{position:relative;z-index:10}
 
 
 /* ================= additions that test_openstent does not have ================= */
-/* the dev HUD stays in the markup (hero-shader.js reads its sliders) but is hidden */
-.hud{display:none}
-
 /* sub-pages have no hero: the fixed bar needs room */
 .page-top{padding-top:calc(64px + var(--bar))}
 
@@ -528,3 +502,77 @@ main{position:relative;z-index:10}
   .foot-cols{grid-template-columns:1fr;gap:28px}
   .foot-cols > div + div{border-left:0;border-top:1px solid rgba(223,229,235,.2);padding-top:24px}
 }
+
+/* ---------- checklist ---------- */
+.progress{height:8px;margin-top:clamp(18px,2vw,26px);border-radius:999px;background:var(--surface);overflow:hidden}
+.progress span{display:block;width:var(--w,0%);height:100%;border-radius:inherit;background:var(--accent)}
+.progress--small{height:5px;margin-top:10px;max-width:280px}
+.checklist{list-style:none;margin:clamp(10px,2vh,22px) 0 0;padding:0}
+.checklist li{display:grid;grid-template-columns:1fr 34px;gap:14px;padding:clamp(5px,1vh,10px) 0;border-top:1px solid rgba(223,229,235,.12)}
+.checklist b{font-weight:600;letter-spacing:-.015em;font-size:16.5px}
+.checklist p{margin-top:2px;font-size:clamp(13px,1.75vh,14.5px);line-height:1.4;opacity:.78;max-width:62ch}
+.checklist .todo b{opacity:.65}
+
+/* ---------- team page: the intro as a mini hero ---------- */
+.team--hero{margin-bottom:clamp(32px,4vw,56px)}
+.more-row{margin-top:clamp(18px,2vw,26px)}
+
+/* ---------- vertical nav of the solution ---------- */
+.vnav{position:fixed;right:clamp(14px,2vw,28px);top:50%;transform:translateY(-50%);z-index:20;
+  display:flex;flex-direction:column;gap:6px;opacity:0;pointer-events:none;transition:opacity .3s}
+.vnav.on{opacity:1;pointer-events:auto}
+.vnav button{position:relative;display:block;width:22px;height:22px;padding:0;border:0;background:none;cursor:pointer}
+.vnav button::before{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;
+  border-radius:50%;background:rgba(223,229,235,.35);transition:background .2s,transform .2s}
+.vnav button:hover::before{background:var(--text)}
+.vnav button.active::before{background:var(--accent);transform:scale(1.5)}
+.vnav button span{position:absolute;right:30px;top:50%;transform:translateY(-50%);white-space:nowrap;
+  font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text);
+  opacity:0;pointer-events:none;transition:opacity .2s}
+.vnav button:hover span,.vnav button:focus-visible span,.vnav button.active span{opacity:1}
+@media(max-width:900px){.vnav{display:none}}
+
+
+/* ---------- checklist: fits in one screen, then plays step by step ---------- */
+/* the first line clears the fixed bar, because the auto-scroll stops on the top of this section */
+#checklist{padding-top:calc(64px + var(--bar) + clamp(10px,2vh,24px));padding-bottom:clamp(12px,2.5vh,32px)}
+#checklist .lede{margin-top:clamp(8px,1.4vh,16px)}
+#checklist .progress{margin-top:clamp(12px,2vh,20px)}
+
+
+/* checklist.js adds .anim, then .shown on each step in turn, then .checked on the validated
+   ones in turn (the bar follows), then .pulse on the current one. Without the script the
+   final state shows as is. */
+#checklist.anim .progress span{width:var(--w,0%);transition:width .5s cubic-bezier(.22,.61,.36,1)}
+#checklist.anim .progress--small span{width:0}
+#checklist.anim .shown .progress--small span{width:var(--w,0%);transition:width .9s cubic-bezier(.22,.61,.36,1) .2s}
+#checklist.anim .checklist li{opacity:0;transform:translateY(12px);
+  transition:opacity .4s ease,transform .4s cubic-bezier(.22,.61,.36,1)}
+#checklist.anim .checklist li.shown{opacity:1;transform:none}
+
+/* ---------- checklist toggles (display only: nothing to click) ---------- */
+.checklist .mark{position:relative;width:34px;height:20px;margin-top:2px;border-radius:999px;
+  background:rgba(223,229,235,.16);transition:background .3s;pointer-events:none}
+.checklist .mark::after{content:"";position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;
+  background:var(--text);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.checklist .done .mark{background:var(--accent)}
+.checklist .done .mark::after{transform:translateX(14px);background:#fff}
+/* the current step: a switch still off, glowing */
+.checklist .current .mark{box-shadow:0 0 0 3px rgba(239,35,60,.25)}
+/* while the script plays, a validated step starts off and flips when it is ticked */
+#checklist.anim .done .mark{background:rgba(223,229,235,.16)}
+#checklist.anim .done .mark::after{transform:none;background:var(--text)}
+#checklist.anim .done.checked .mark{background:var(--accent)}
+#checklist.anim .done.checked .mark::after{transform:translateX(14px);background:#fff}
+#checklist.anim .current .mark{box-shadow:none}
+#checklist.anim .current.pulse .mark{animation:toggle-glow 2.2s ease-in-out infinite}
+@keyframes toggle-glow{
+  0%,100%{box-shadow:0 0 0 3px rgba(239,35,60,.25)}
+  50%{box-shadow:0 0 0 8px rgba(239,35,60,0)}}
+
+/* the checklist runs straight into the contact section: no rule between them */
+#contact-teaser{border-top:0}
+
+/* the toggle sits on the right of its step */
+.checklist li > div{grid-column:1;grid-row:1}
+.checklist li > .mark{grid-column:2;grid-row:1;align-self:start}

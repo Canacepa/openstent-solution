@@ -1,0 +1,8 @@
+<section id="partenaires">
+    <h2>Nos partenaires</h2>
+    <ul class="partners">
+        {% for p in [['initiative-somme', 'Initiative Somme', 505], ['french-tech-seed', 'French Tech Seed', 160], ['eurasante', 'Eurasanté', 160], ['cci', 'CCI', 412], ['amiens-cluster', 'Amiens Cluster', 480]] %}
+            <li><img src="{{ asset('images/partners/' ~ p[0] ~ '.webp') }}" alt="{{ p[1] }}" width="{{ p[2] }}" height="160" loading="lazy" decoding="async"></li>
+        {% endfor %}
+    </ul>
+</section>

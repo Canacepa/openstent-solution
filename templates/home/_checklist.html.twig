@@ -1,0 +1,38 @@
+{# status: done | current | todo. The project steps are written here, the last item is computed. #}
+{% set steps = [
+    {status: 'done', title: 'Conception de la Cornelis™ Valve', text: 'Le principe du ruban valvé est défini.'},
+    {status: 'done', title: 'Essais de faisabilité sur banc', text: 'Déploiement, fermeture, étanchéité et tenue en fatigue démontrés.'},
+    {status: 'done', title: "Essais de faisabilité sur l'animal", text: "Positionnement, verrouillage dans l'anneau et hémodynamique prometteurs."},
+    {status: 'current', title: 'Finalisation de la conception', text: 'Les derniers ajustements de la valve sont en cours.'},
+    {status: 'todo', title: 'Études animales complémentaires', text: 'Prévues en 2025.'},
+    {status: 'todo', title: 'Tests réglementaires', text: "Vérification et validation, avant tout essai chez l'humain."},
+    {status: 'todo', title: "Premiers essais chez l'humain", text: "Pas encore : la valve n'est pas approuvée."}
+] %}
+{% set team_done = team.total > 0 and team.complete == team.total %}
+{% set done = steps|filter(s => s.status == 'done')|length + (team_done ? 1 : 0) %}
+{% set total = steps|length + 1 %}
+<section id="checklist">
+    <p class="kicker">Où en est le projet</p>
+    <h2>Une étape après l'autre.</h2>
+    <p class="lede">{{ done }} étape{{ done > 1 ? 's' : '' }} sur {{ total }} terminée{{ done > 1 ? 's' : '' }}.</p>
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ done }}">
+        <span style="--w: {{ (done / total * 100)|round }}%"></span>
+    </div>
+    <ol class="checklist">
+        <li class="{{ team_done ? 'done' : 'current' }}" style="--i: 0">
+            <span class="mark" aria-hidden="true"></span>
+            <div>
+                <b>Création de l'équipe</b>
+                <p>{{ team.complete }} profil{{ team.complete > 1 ? 's' : '' }} complet{{ team.complete > 1 ? 's' : '' }} sur {{ team.total }} (photo, poste et biographie).</p>
+                <div class="progress progress--small"><span style="--w: {{ team.total ? (team.complete / team.total * 100)|round : 0 }}%"></span></div>
+                <p><a class="more" href="{{ path('app_team') }}">Voir l'équipe <span aria-hidden="true">&rsaquo;</span></a></p>
+            </div>
+        </li>
+        {% for s in steps %}
+            <li class="{{ s.status }}" style="--i: {{ loop.index }}">
+                <span class="mark" aria-hidden="true"></span>
+                <div><b>{{ s.title }}</b><p>{{ s.text }}</p></div>
+            </li>
+        {% endfor %}
+    </ol>
+</section>

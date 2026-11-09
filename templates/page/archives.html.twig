@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Archives{% endblock %}
+
+{% block body %}
+    <div class="sheet page-top">
+        <section>
+            <p class="kicker">Archives</p>
+            <h1 class="h2">Toutes les actualités.</h1>
+            {% if news is empty %}
+                <p class="lede">Aucune actualité pour le moment.</p>
+            {% else %}
+                <ul class="feed">
+                    {% for n in news %}
+                        <li>
+                            <time datetime="{{ n.publishedAt|date('Y-m-d') }}">{{ n.dateLabel }}</time>
+                            <div><b>{{ n.title }}</b>
+                                <p>{{ n.summary }}</p></div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}
